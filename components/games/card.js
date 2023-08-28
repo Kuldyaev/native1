@@ -1,22 +1,33 @@
-import { StyleSheet, View, Text, Dimensions, TouchableHighlight } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Image, Pressable } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
 
 
 
-function Card({ hide, touchCard, id}) {
-  let text1;
-  if (hide === '1') {
-    text1 = (<Text style={style.text}>{hide}</Text>);
+function Card({ hide, touchCard, id, flag}) {
+  let image;
+  if (hide === '0') {
+
+    image = <Image
+      style={{
+        width: '96%',
+        height: '63%',
+        resizeMode: 'contain',
+        marginLeft: '2%'
+      }}
+      source={{
+        uri: flag,
+      }}
+    />;
   } else {
-    text1 = (<Text style={style.text}>{id}</Text>);
+    image = (<Image style={style.image} source={require('../../assets/adaptive-icon.png')}/>);
   }
 
 
   return (
-    <TouchableHighlight style={style.card} onPress={()=> touchCard(id) }>
-      {text1}
-    </TouchableHighlight>
+    <Pressable style={style.card} onPress={()=> touchCard(id) }>
+      {image}
+    </Pressable>
   );
 }
 
@@ -40,6 +51,10 @@ const style = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
     paddingHorizontal: '40%'
+  },
+  image:{
+    width: '96%',
+    height: '96%'
   }
 });
 
