@@ -1,32 +1,37 @@
 import { StyleSheet, View, Text, Dimensions, Image, Pressable } from "react-native";
+import { FontAwesome } from '@expo/vector-icons'; // use FontAwesome from the expo vector icons
 
 const windowWidth = Dimensions.get("window").width;
 
 
 
 function Card({ hide, touchCard, id, flag}) {
-  let image;
-  if (hide === '0') {
+  let image, text;
 
+  if (hide === '0') {
     image = <Image
       style={{
-        width: '96%',
-        height: '63%',
+        width: '63%',
+        height: '42%',
         resizeMode: 'contain',
-        marginLeft: '2%'
+        marginLeft: '21%'
       }}
       source={{
         uri: flag,
       }}
     />;
+    text = <Text style={{
+      color: 'black',
+      marginLeft: '30%'
+    }}>Spain</Text>
   } else {
     image = (<Image style={style.image} source={require('../../assets/adaptive-icon.png')}/>);
   }
 
-
   return (
-    <Pressable style={style.card} onPress={()=> touchCard(id) }>
+    <Pressable style={ hide === '0' ? style.cardBack : style.card} onPress={()=> touchCard(id) }>
       {image}
+      {text}
     </Pressable>
   );
 }
@@ -41,6 +46,17 @@ const style = StyleSheet.create({
     border: "1px solid black",
     borderRadius: "4px",
     backgroundColor: '#2e3d49',
+    marginRight: '2%'
+  },
+  cardBack: {
+    width: windowWidth * 0.22,
+    height: windowWidth * 0.22,
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    border: "1px solid black",
+    borderRadius: "4px",
+    backgroundColor: 'rgb(2, 204, 186)',
     marginRight: '2%'
   },
   text: {
