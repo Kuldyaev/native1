@@ -1,0 +1,7 @@
+export  const  take8cards = () => {
+  return {
+    type: 'TAKE_EIGHT',
+  };
+};
+
+

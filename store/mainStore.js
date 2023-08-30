@@ -1,8 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit'
-import flags from '../reducers/flags'
+import { configureStore } from '@reduxjs/toolkit';
+import flagsReducer from '../reducers/flags';
+import counterReducer from '../reducers/counter';
 
 export default configureStore({
   reducer: {
-    flags: flags,
+    
+    counter: counterReducer,
+    flags: flagsReducer,
   },
 })
