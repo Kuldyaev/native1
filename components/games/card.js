@@ -5,7 +5,7 @@ const windowWidth = Dimensions.get("window").width;
 
 
 
-function Card({ hide, touchCard, id, flag, ind}) {
+function Card({ hide, touchCard, id, flag, ind, name}) {
   let image, text;
 
   if (hide === '0') {
@@ -23,7 +23,7 @@ function Card({ hide, touchCard, id, flag, ind}) {
     text = <Text style={{
       color: 'black',
       marginLeft: '30%'
-    }}>Spain</Text>
+    }}>{name}</Text>
   } else {
     image = (<Image style={style.image} source={require('../../assets/adaptive-icon.png')}/>);
   }
