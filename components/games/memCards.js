@@ -222,6 +222,9 @@ function MemCards({ navigation }) {
     shuffle(clone);
     clone.push( ...cardsBase );
     shuffle(clone);
+    for (let i=0; i<16; i++){
+      clone[i] = {...clone[i], key: i};
+    };
     setData(clone);
   }, []);
 
@@ -248,16 +251,16 @@ function MemCards({ navigation }) {
     return array;
   }
 
-  function touchCard(id) {
-    const ind = data.indexOf(data.filter((item) => item.id === id)[0]);
+  function touchCard(key) {
+    const ind = data.indexOf(data.filter((item) => item.key === key)[0]);
     if (data[ind].hide === "0") {
-      let tmvar = data[ind];
-      tmvar.hide = "1";
-      setData([...data.slice(0, ind), tmvar, ...data.slice(ind + 1)]);
+      //let tmvar = data[ind];
+      //tmvar.hide = "1";
+      setData([...data.slice(0, ind), { ...data[ind], hide: "1"}, ...data.slice(ind + 1)]);
     } else {
-      let tmvar = data[ind];
-      tmvar.hide = "0";
-      setData([...data.slice(0, ind), tmvar, ...data.slice(ind + 1)]);
+     // let tmvar = data[ind];
+     // tmvar.hide = "0";
+      setData([...data.slice(0, ind), { ...data[ind], hide: "0"}, ...data.slice(ind + 1)]);
     }
   }
 
@@ -297,8 +300,9 @@ function MemCards({ navigation }) {
               return (
                 <Card
                   hide={item.hide}
-                  key={item.id}
+                  key={item.key}
                   id={item.id}
+                  ind = {item.key}
                   flag={item.flag}
                   touchCard={touchCard}
                 />

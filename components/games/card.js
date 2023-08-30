@@ -5,7 +5,7 @@ const windowWidth = Dimensions.get("window").width;
 
 
 
-function Card({ hide, touchCard, id, flag}) {
+function Card({ hide, touchCard, id, flag, ind}) {
   let image, text;
 
   if (hide === '0') {
@@ -29,7 +29,7 @@ function Card({ hide, touchCard, id, flag}) {
   }
 
   return (
-    <Pressable style={ hide === '0' ? style.cardBack : style.card} onPress={()=> touchCard(id) }>
+    <Pressable style={ hide === '0' ? style.cardBack : style.card} onPress={()=> touchCard(ind) }>
       {image}
       {text}
     </Pressable>
