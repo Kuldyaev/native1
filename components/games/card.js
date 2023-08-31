@@ -1,4 +1,5 @@
 import {
+  Platform,
   StyleSheet,
   View,
   Text,
@@ -15,7 +16,8 @@ function Card({ hide, touchCard, id, flag, ind, name, type, color }) {
   let CardSource = FontAwesome ; // set FontAwesome as the default icon source
   let icon_name = "question-circle";
   let icon_color = 'grey';
-  let sizeIcon = windowWidth * 0.20;
+  let sizeIconforBack = windowWidth * 0.20;
+  let sizeIcon = windowWidth * 0.15;
 
   if (hide === "1" ){
     CardSource = FontAwesome ;
@@ -71,7 +73,7 @@ function Card({ hide, touchCard, id, flag, ind, name, type, color }) {
       ) : (
         <CardSource
           name={icon_name}
-          size={sizeIcon}
+          size={sizeIconforBack}
           color={icon_color}
           style={style.imageCirlce}
         />
@@ -80,7 +82,7 @@ function Card({ hide, touchCard, id, flag, ind, name, type, color }) {
 
   return (
     <Pressable
-      style={hide === "0" ? style.cardBack : style.card}
+      style={hide === "0" ? (type === "flags" ? style.cardBack : style.cardBackCircle) : style.card}
       onPress={() => touchCard(ind)}
     >
       {image}
@@ -112,6 +114,17 @@ const style = StyleSheet.create({
     backgroundColor: "rgb(2, 204, 186)",
     marginRight: "2%",
   },
+  cardBackCircle: {
+    width: windowWidth * 0.22,
+    height: windowWidth * 0.22,
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    border: "1px solid black",
+    borderRadius: "4px",
+    backgroundColor: "#ffffff",
+    marginRight: "2%",
+  },
   text: {
     width: "100%",
     display: "flex",
@@ -127,8 +140,21 @@ const style = StyleSheet.create({
   },
   imageCirlce: {
     flex: 1,
+    display: 'flex',
     alignItems: "center",
-  },
+    width: '100%',
+    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+          marginLeft: '15%',
+          marginTop: '15%',
+      },
+      android: {
+        marginLeft: '15%',
+        marginTop: '15%',
+      },
+  }),
+  }
 });
 
 export default Card;
