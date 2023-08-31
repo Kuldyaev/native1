@@ -21,12 +21,19 @@ function MemCards({ navigation }) {
   const [prevCardKey, setPrevCardKey] = useState(null); 
   const [matchCards, setMatchCards] = useState([]);
   const [steps, setSteps] = useState(0);
+  const [type, setType] = useState('icons');
   const flagsBase = useSelector((state) => state.flags);
+  const iconsbase = useSelector(state => state.icons);
   let cardsBase = [];
 
 
  useEffect(() => {
-    cardsBase = chooseCardsFromDeck(flagsBase, 8);
+    if(type === 'icons'){
+      cardsBase = iconsbase;
+    } else {
+      cardsBase = chooseCardsFromDeck(flagsBase, 8);
+    }
+    
     let clone = [];
     clone.push( ...cardsBase );
     shuffle(clone);
@@ -87,6 +94,9 @@ function MemCards({ navigation }) {
       setSteps(steps + 1);
     } else {
       if (data[prevCardKey].id === data[ind].id){
+        if(matchCards.length === 7 ){
+          console.log( 'final');
+        }
         setMatchCards([...matchCards, data[ind].id]);
         setPrevCardKey(null);
       } else {
@@ -119,9 +129,9 @@ function MemCards({ navigation }) {
         <Button title="New game" style={style.headerBtn} />
       </View>
       <View style={style.info}>
-        <Text>Time</Text>
-        <Text>Steps: {steps}</Text>
-        <Text>Score</Text>
+        <Text style={style.infoText}>Time: </Text>
+        <Text style={style.infoText}>Steps: {steps}</Text>
+        <Text style={style.infoText}>Score</Text>
       </View>
       <LinearGradient
         colors={["#4c669f", "#3b5998", "#192f6a"]}
@@ -141,6 +151,8 @@ function MemCards({ navigation }) {
                   ind = {item.key}
                   flag={item.flag}
                   name={item.name}
+                  color={item.color}
+                  type = { type }
                   touchCard={touchCard}
                 />
               );
@@ -149,7 +161,7 @@ function MemCards({ navigation }) {
         </LinearGradient>
       </LinearGradient>
       <View style={style.footer}>
-        <Text>Footer</Text>
+        <Text style={style.footerText}>Footer</Text>
       </View>
     </SafeAreaView>
   );
@@ -173,7 +185,7 @@ const style = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: "3%",
-    backgroundColor: "yellow",
+    backgroundColor: "silver",
   },
   headerBtn: {
     color: "black",
@@ -184,12 +196,16 @@ const style = StyleSheet.create({
   info: {
     width: "100%",
     height: "12%",
+    color: 'white',
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: "3%",
-    backgroundColor: "green",
+    backgroundColor: "#2e3d49",
+  },
+  infoText: {
+    color: 'silver'
   },
   footer: {
     width: "100%",
@@ -198,8 +214,11 @@ const style = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: "3% 0%",
-    backgroundColor: "red",
+    padding: "1%",
+    backgroundColor: "#2e3d49",
+  },
+  footerText: {
+    color: 'grey'
   },
   desk: {
     width: "100%",
