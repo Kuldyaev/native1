@@ -18,32 +18,35 @@ const windowWidth = Dimensions.get("window").width;
 function MemCards({ navigation }) {
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
-  const [prevCardKey, setPrevCardKey] = useState(null); 
+  const [prevCardKey, setPrevCardKey] = useState(null);
   const [matchCards, setMatchCards] = useState([]);
   const [steps, setSteps] = useState(0);
-  const [type, setType] = useState('icons');
+  const [type, setType] = useState("icons");
   const flagsBase = useSelector((state) => state.flags);
-  const iconsbase = useSelector(state => state.icons);
+  const iconsbase = useSelector((state) => state.icons);
   let cardsBase = [];
 
+  useEffect(() => {
+    startgame ();
+  }, []);
 
- useEffect(() => {
-    if(type === 'icons'){
+  function startgame (){
+    if (type === "icons") {
       cardsBase = iconsbase;
     } else {
       cardsBase = chooseCardsFromDeck(flagsBase, 8);
     }
-    
+
     let clone = [];
-    clone.push( ...cardsBase );
+    clone.push(...cardsBase);
     shuffle(clone);
-    clone.push( ...cardsBase );
+    clone.push(...cardsBase);
     shuffle(clone);
-    for (let i=0; i<16; i++){
-      clone[i] = {...clone[i], key: i};
-    };
+    for (let i = 0; i < 16; i++) {
+      clone[i] = { ...clone[i], key: i };
+    }
     setData(clone);
-  }, []);
+  }
 
   function chooseCardsFromDeck(deck, quantity) {
     let newCards = Array.from(deck);
@@ -68,15 +71,15 @@ function MemCards({ navigation }) {
     return array;
   }
 
-  function checkHideAndShow (){
+  function checkHideAndShow() {
     let checkData = [];
-    data.forEach((card)=>{
-      if(matchCards.includes(card.id)){
-        card.hide = '0';
-        checkData.push(card)
+    data.forEach((card) => {
+      if (matchCards.includes(card.id)) {
+        card.hide = "0";
+        checkData.push(card);
       } else {
-        card.hide = '1';
-        checkData.push(card)
+        card.hide = "1";
+        checkData.push(card);
       }
     });
     setData(checkData);
@@ -86,32 +89,51 @@ function MemCards({ navigation }) {
     const ind = data.indexOf(data.filter((item) => item.key === key)[0]);
 
     if (data[ind].hide === "1") {
-      setData([...data.slice(0, ind), { ...data[ind], hide: "0"}, ...data.slice(ind + 1)]); 
-    } 
+      setData([
+        ...data.slice(0, ind),
+        { ...data[ind], hide: "0" },
+        ...data.slice(ind + 1),
+      ]);
+    }
 
     if (prevCardKey === null) {
       setPrevCardKey(ind);
       setSteps(steps + 1);
     } else {
-      if (data[prevCardKey].id === data[ind].id){
-        if(matchCards.length === 7 ){
-          console.log( 'final');
+      if (data[prevCardKey].id === data[ind].id) {
+        if (matchCards.length === 7) {
+          console.log("final");
         }
         setMatchCards([...matchCards, data[ind].id]);
         setPrevCardKey(null);
       } else {
-        setTimeout(()=>  {
-          setData([...data.slice(0, ind), { ...data[ind], hide: "1"}, ...data.slice(ind + 1)]);
-          setData([...data.slice(0, prevCardKey), { ...data[prevCardKey], hide: "1"}, ...data.slice(prevCardKey + 1)]);
+        setTimeout(() => {
+          setData([
+            ...data.slice(0, ind),
+            { ...data[ind], hide: "1" },
+            ...data.slice(ind + 1),
+          ]);
+          setData([
+            ...data.slice(0, prevCardKey),
+            { ...data[prevCardKey], hide: "1" },
+            ...data.slice(prevCardKey + 1),
+          ]);
           checkHideAndShow();
         }, 159);
         setPrevCardKey(null);
       }
-    };
+    }
   }
 
-  const counter = useSelector((state) => state.counter.value);
+  function restartGame() {
+    setPrevCardKey(null);
+    setMatchCards([]);
+    setSteps(0);
+    startgame ();
 
+    console.log('restart game');
+  }
+  const counter = useSelector((state) => state.counter.value);
 
   useEffect(() => {
     dispatch(increment());
@@ -126,7 +148,11 @@ function MemCards({ navigation }) {
           onPress={() => navigation.navigate("Games")}
         />
         <Text>MemoryGame</Text>
-        <Button title="New game" style={style.headerBtn} />
+        <Button
+          title="New game"
+          style={style.headerBtn}
+          onPress={restartGame}
+        />
       </View>
       <View style={style.info}>
         <Text style={style.infoText}>Time: </Text>
@@ -148,11 +174,11 @@ function MemCards({ navigation }) {
                   hide={item.hide}
                   key={item.key}
                   id={item.id}
-                  ind = {item.key}
+                  ind={item.key}
                   flag={item.flag}
                   name={item.name}
                   color={item.color}
-                  type = { type }
+                  type={type}
                   touchCard={touchCard}
                 />
               );
@@ -196,7 +222,7 @@ const style = StyleSheet.create({
   info: {
     width: "100%",
     height: "12%",
-    color: 'white',
+    color: "white",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -205,7 +231,7 @@ const style = StyleSheet.create({
     backgroundColor: "#2e3d49",
   },
   infoText: {
-    color: 'silver'
+    color: "silver",
   },
   footer: {
     width: "100%",
@@ -218,7 +244,7 @@ const style = StyleSheet.create({
     backgroundColor: "#2e3d49",
   },
   footerText: {
-    color: 'grey'
+    color: "grey",
   },
   desk: {
     width: "100%",
