@@ -21,16 +21,20 @@ function MemCards({ navigation }) {
   const [prevCardKey, setPrevCardKey] = useState(null);
   const [matchCards, setMatchCards] = useState([]);
   const [steps, setSteps] = useState(0);
-  const [type, setType] = useState("icons");
+  const [type, setType] = useState("flags");
+  const [starttime, setStarttime] = useState(0);
+  const [clocktimer, setClocktimer] = useState([]);
+  const [time, setTime] = useState(0);
+  const [gamerun, setGamerun] = useState(false);
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   let cardsBase = [];
 
   useEffect(() => {
-    startgame ();
+    startgame();
   }, []);
 
-  function startgame (){
+  function startgame() {
     if (type === "icons") {
       cardsBase = iconsbase;
     } else {
@@ -86,6 +90,15 @@ function MemCards({ navigation }) {
   }
 
   function touchCard(key) {
+    showTime(time);
+    console.log('################');
+    console.log('time:' + time);
+    console.log('starttime:' + starttime);
+    console.log('clocktimer:' + clocktimer);
+    console.log('diff:' + (performance.now() - starttime));
+    console.log('now:'+ performance.now());
+    console.log('################');
+
     const ind = data.indexOf(data.filter((item) => item.key === key)[0]);
 
     if (data[ind].hide === "1") {
@@ -126,13 +139,73 @@ function MemCards({ navigation }) {
   }
 
   function restartGame() {
+    clocktimer.forEach( item => clearInterval(item));
+    console.log('time:' + time);
+    console.log('clocktimer:' + clocktimer);
+   // clearInterval(clocktimer);
+    setClocktimer([]);
     setPrevCardKey(null);
     setMatchCards([]);
     setSteps(0);
-    startgame ();
-
-    console.log('restart game');
+    setTime(0);
+    startgame();
+    setGamerun(false);
+    console.log('clocktimer:' + clocktimer);
   }
+
+  function startTimer() {
+    if (clocktimer.length>0){console.log('STOP!')};
+    const xxx = setInterval( () => {checkTime();},980);
+    setClocktimer([...clocktimer, xxx]);
+    setGamerun(true);
+  }
+
+  function checkTime(){
+    console.log('********');
+    console.log('gamerun:' + gamerun);
+    console.log('time:' + time);
+    console.log('clocktimer:' + clocktimer);
+    console.log('starttime:' + starttime);
+    console.log('diff:' + (performance.now() - starttime));
+    console.log('now:'+ performance.now());
+    console.log('********');
+    setTime(performance.now() - starttime);
+  }
+
+  function showTime(){
+    if (!gamerun){
+        setStarttime(performance.now());
+       startTimer();
+       console.log('$$$$$$$$$$$$$$$$$$$');
+       console.log('starttime:' + starttime);
+       console.log('$$$$$$$$$$$$$$$$$$$$$$$$');
+    }
+    else{
+    /*  if(order.length === 15){
+      finishtime =performance.now();
+      time = (finishtime-starttime);
+      startclock = 0;
+      clearInterval(clocktimer);
+      openCongrads();}
+      else if((performance.now()-starttime)>3600000){
+        startclock = 0;
+        clearInterval(clocktimer);
+        time = 'More 1 hour';
+        document.getElementById('time').innerHTML = time;
+      }
+      */
+    }
+  }
+
+  //Formated time value
+  function msToTime(duration) {
+    let s = parseInt((duration / 1000) % 60);
+    let m = parseInt((duration / (1000 * 60)) % 60);
+    m = m < 10 ? "0" + m : m;
+    s = s < 10 ? "0" + s : s;
+    return m + ":" + s;
+  }
+
   const counter = useSelector((state) => state.counter.value);
 
   useEffect(() => {
@@ -155,9 +228,9 @@ function MemCards({ navigation }) {
         />
       </View>
       <View style={style.info}>
-        <Text style={style.infoText}>Time: </Text>
+        <Text style={style.infoText}>Time: { msToTime(time) }</Text>
         <Text style={style.infoText}>Steps: {steps}</Text>
-        <Text style={style.infoText}>Score</Text>
+        <Text style={style.infoText}>Score </Text>
       </View>
       <LinearGradient
         colors={["#4c669f", "#3b5998", "#192f6a"]}
