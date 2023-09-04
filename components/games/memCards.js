@@ -34,6 +34,13 @@ function MemCards({ navigation }) {
     startgame();
   }, []);
 
+  useEffect(() => {
+    startTimer();
+    return () => {
+      clocktimer.forEach( item => clearInterval(item));
+    }
+  }, [gamerun]);
+
   function startgame() {
     if (type === "icons") {
       cardsBase = iconsbase;
@@ -90,7 +97,10 @@ function MemCards({ navigation }) {
   }
 
   function touchCard(key) {
-    showTime(time);
+    if (!gamerun){
+      setGamerun(true);
+    }
+    /*
     console.log('################');
     console.log('time:' + time);
     console.log('starttime:' + starttime);
@@ -98,7 +108,7 @@ function MemCards({ navigation }) {
     console.log('diff:' + (performance.now() - starttime));
     console.log('now:'+ performance.now());
     console.log('################');
-
+    */
     const ind = data.indexOf(data.filter((item) => item.key === key)[0]);
 
     if (data[ind].hide === "1") {
@@ -139,7 +149,7 @@ function MemCards({ navigation }) {
   }
 
   function restartGame() {
-    clocktimer.forEach( item => clearInterval(item));
+    
     console.log('time:' + time);
     console.log('clocktimer:' + clocktimer);
    // clearInterval(clocktimer);
@@ -154,10 +164,9 @@ function MemCards({ navigation }) {
   }
 
   function startTimer() {
-    if (clocktimer.length>0){console.log('STOP!')};
     const xxx = setInterval( () => {checkTime();},980);
     setClocktimer([...clocktimer, xxx]);
-    setGamerun(true);
+    
   }
 
   function checkTime(){
@@ -169,35 +178,10 @@ function MemCards({ navigation }) {
     console.log('diff:' + (performance.now() - starttime));
     console.log('now:'+ performance.now());
     console.log('********');
-    setTime(performance.now() - starttime);
+    //setTime(performance.now() - starttime);
   }
 
-  function showTime(){
-    if (!gamerun){
-        setStarttime(performance.now());
-       startTimer();
-       console.log('$$$$$$$$$$$$$$$$$$$');
-       console.log('starttime:' + starttime);
-       console.log('$$$$$$$$$$$$$$$$$$$$$$$$');
-    }
-    else{
-    /*  if(order.length === 15){
-      finishtime =performance.now();
-      time = (finishtime-starttime);
-      startclock = 0;
-      clearInterval(clocktimer);
-      openCongrads();}
-      else if((performance.now()-starttime)>3600000){
-        startclock = 0;
-        clearInterval(clocktimer);
-        time = 'More 1 hour';
-        document.getElementById('time').innerHTML = time;
-      }
-      */
-    }
-  }
-
-  //Formated time value
+    //Formated time value
   function msToTime(duration) {
     let s = parseInt((duration / 1000) % 60);
     let m = parseInt((duration / (1000 * 60)) % 60);
