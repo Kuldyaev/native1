@@ -6,6 +6,9 @@ import {
   View,
   Text,
   Dimensions,
+  Alert, 
+  Modal,
+  Pressable
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,19 +24,25 @@ function MemCards({ navigation }) {
   const [prevCardKey, setPrevCardKey] = useState(null);
   const [matchCards, setMatchCards] = useState([]);
   const [steps, setSteps] = useState(0);
-  const [type, setType] = useState("pets");
+  const [type, setType] = useState('');
   const [starttime, setStarttime] = useState(0);
   const [clocktimer, setClocktimer] = useState([]);
   const [time, setTime] = useState(0);
   const [gamerun, setGamerun] = useState(false);
+  const [startModalVisible, setStartModalVisible] = useState(false);
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
-  let cardsBase = [];
+
 
   useEffect(() => {
-    startgame();
+    setStartModalVisible(true);
   }, []);
+
+  useEffect(() => {
+   
+  }, [type]);
+
 
   useEffect(() => {
     if (gamerun) {
@@ -48,26 +57,7 @@ function MemCards({ navigation }) {
     }
   }, [gamerun]);
 
-  function startgame() {
-    if (type === "icons") {
-      cardsBase = iconsbase;
-    } else if (type === "pets"){  
-      cardsBase = petsbase;
-    } else {
-      cardsBase = chooseCardsFromDeck(flagsBase, 8);
-    }
-
-    let clone = [];
-    clone.push(...cardsBase);
-    shuffle(clone);
-    clone.push(...cardsBase);
-    shuffle(clone);
-    for (let i = 0; i < 16; i++) {
-      clone[i] = { ...clone[i], key: i };
-    }
-    setData(clone);
-  }
-
+  
   function chooseCardsFromDeck(deck, quantity) {
     let newCards = Array.from(deck);
     while (newCards.length > quantity) {
@@ -156,7 +146,7 @@ function MemCards({ navigation }) {
     setSteps(0);
     setTime(0);
     setGamerun(false);
-    startgame();
+    startGame();
   }
 
   function checkTime() {
@@ -182,6 +172,50 @@ function MemCards({ navigation }) {
     s = s < 10 ? "0" + s : s;
     return m + ":" + s;
   }
+  // Choose type of cards
+  function chooseTypeOfCards(type){
+    setType(type);
+    let cardsBase = [];
+    if (type==="icons") {
+      cardsBase = iconsbase;
+    } else if (type==="pets"){  
+      cardsBase = petsbase;
+    } else {
+      cardsBase = chooseCardsFromDeck(flagsBase, 8);
+    }
+    console.log(cardsBase);
+    let clone = [];
+    clone.push(...cardsBase);
+    shuffle(clone);
+    clone.push(...cardsBase);
+    shuffle(clone);
+    for (let i = 0; i < 16; i++) {
+      clone[i] = { ...clone[i], key: i };
+    }
+    setData(clone);
+    setStartModalVisible(!startModalVisible);
+  }
+
+ function startGame(){
+    let cardsBase = [];
+    if (type==="icons") {
+      cardsBase = iconsbase;
+    } else if (type==="pets"){  
+      cardsBase = petsbase;
+    } else {
+      cardsBase = chooseCardsFromDeck(flagsBase, 8);
+    }
+    console.log(cardsBase);
+    let clone = [];
+    clone.push(...cardsBase);
+    shuffle(clone);
+    clone.push(...cardsBase);
+    shuffle(clone);
+    for (let i = 0; i < 16; i++) {
+      clone[i] = { ...clone[i], key: i };
+    }
+    setData(clone);
+  }
 
   const counter = useSelector((state) => state.counter.value);
 
@@ -191,6 +225,42 @@ function MemCards({ navigation }) {
 
   return (
     <SafeAreaView style={style.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={startModalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setStartModalVisible(!startModalVisible);
+        }}>
+        <View style={style.centeredView}>
+          <View style={style.modalView}>
+            <Text style={style.modalText}>Choose Type of Cards!</Text>
+            <Text style={style.modalText}> </Text>
+            <Text style={style.modalText}>Flags</Text>
+            <Pressable
+              style={[style.button, style.buttonClose]}
+              onPress={() => chooseTypeOfCards('flags')}>
+              <Text style={style.textStyle}>Flags</Text>
+            </Pressable>
+            <Text style={style.modalText}>Pets</Text>
+            <Pressable
+              style={[style.button, style.buttonClose]}
+              onPress={() => chooseTypeOfCards('pets')}>
+              <Text style={style.textStyle}>Pets</Text>
+            </Pressable>
+            <Text style={style.modalText}>Symbols</Text>
+            <Pressable
+              style={[style.button, style.buttonClose]}
+              onPress={() => chooseTypeOfCards('icons')}>
+              <Text style={style.textStyle}>Symbols</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+
+
       <View style={style.header}>
         <Button
           title="Back"
@@ -213,7 +283,7 @@ function MemCards({ navigation }) {
       <View style={style.info}>
         <Text style={style.infoText}>Time: {msToTime(time)}</Text>
         <Text style={style.infoText}>Steps: {steps}</Text>
-        <Text style={style.infoText}>Score </Text>
+        <Text style={style.infoText}>Score {type}</Text>
       </View>
       <LinearGradient
         colors={["#4c669f", "#3b5998", "#192f6a"]}
@@ -336,6 +406,64 @@ const style = StyleSheet.create({
     borderRadius: "4px",
     backgroundColor: "#2e3d49",
     marginRight: "2%",
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 
