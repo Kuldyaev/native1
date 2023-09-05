@@ -21,13 +21,14 @@ function MemCards({ navigation }) {
   const [prevCardKey, setPrevCardKey] = useState(null);
   const [matchCards, setMatchCards] = useState([]);
   const [steps, setSteps] = useState(0);
-  const [type, setType] = useState("flags");
+  const [type, setType] = useState("pets");
   const [starttime, setStarttime] = useState(0);
   const [clocktimer, setClocktimer] = useState([]);
   const [time, setTime] = useState(0);
   const [gamerun, setGamerun] = useState(false);
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
+  const petsbase = useSelector((state) => state.pets);
   let cardsBase = [];
 
   useEffect(() => {
@@ -38,7 +39,6 @@ function MemCards({ navigation }) {
     if (gamerun) {
       const xxx = setInterval(() => {
         setTime(performance.now() - starttime);
-        checkTime();                   ////////////   удалить потом
       }, 990);
       setClocktimer([...clocktimer, xxx]);
     } else {
@@ -51,6 +51,8 @@ function MemCards({ navigation }) {
   function startgame() {
     if (type === "icons") {
       cardsBase = iconsbase;
+    } else if (type === "pets"){  
+      cardsBase = petsbase;
     } else {
       cardsBase = chooseCardsFromDeck(flagsBase, 8);
     }
@@ -104,6 +106,7 @@ function MemCards({ navigation }) {
   }
 
   function touchCard(key) {
+    checkTime();                   ////////////   удалить потом
     if (!gamerun) {
       setGamerun(true);
       setStarttime(performance.now());
@@ -157,15 +160,18 @@ function MemCards({ navigation }) {
   }
 
   function checkTime() {
+
+    
+    console.log("# time:" + time);
+    /*
     console.log("********");
     console.log("gamerun:" + gamerun);
-    console.log("time:" + time);
     console.log("clocktimer:" + clocktimer);
     console.log("starttime:" + starttime);
     console.log("diff:" + (performance.now() - starttime));
     console.log("now:" + performance.now());
     console.log("********");
-    
+    */
   }
 
   //Formated time value

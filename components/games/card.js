@@ -30,27 +30,38 @@ function Card({ hide, touchCard, id, flag, ind, name, type, color }) {
   }
 
   if (hide === "0") {
-    image = 
-      type === "flags" ? (
-        <Image
+    if (type === "flags"){
+      image = (<Image
+      style={{
+        width: "63%",
+        height: "42%",
+        resizeMode: "contain",
+        marginLeft: "22%",
+      }}
+      source={{
+        uri: flag,
+      }}
+      />)
+    } else if (type === "pets") {
+      image = (<Image
         style={{
-          width: "63%",
-          height: "42%",
+          width: "90%",
+          height: "90%",
           resizeMode: "contain",
-          marginLeft: "22%",
+          marginLeft: "10%",
         }}
         source={{
           uri: flag,
-        }}
+        }} 
+        />)
+    } else {
+      image = <CardSource
+      name={name}
+      size={sizeIcon}
+      color={color}
+      style={style.imageCirlce}
       />
-      ) : (
-        <CardSource
-          name={name}
-          size={sizeIcon}
-          color={color}
-          style={style.imageCirlce}
-        />
-      );
+    };
     text = (
       type === "flags" ? (
       <Text
