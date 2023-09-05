@@ -35,9 +35,16 @@ function MemCards({ navigation }) {
   }, []);
 
   useEffect(() => {
-    startTimer();
-    return () => {
-      clocktimer.forEach( item => clearInterval(item));
+    if (gamerun) {
+      const xxx = setInterval(() => {
+        setTime(performance.now() - starttime);
+        checkTime();                   ////////////   удалить потом
+      }, 990);
+      setClocktimer([...clocktimer, xxx]);
+    } else {
+      clocktimer.forEach(() => {
+        clearInterval(clocktimer.shift());
+      });
     }
   }, [gamerun]);
 
@@ -97,18 +104,10 @@ function MemCards({ navigation }) {
   }
 
   function touchCard(key) {
-    if (!gamerun){
+    if (!gamerun) {
       setGamerun(true);
+      setStarttime(performance.now());
     }
-    /*
-    console.log('################');
-    console.log('time:' + time);
-    console.log('starttime:' + starttime);
-    console.log('clocktimer:' + clocktimer);
-    console.log('diff:' + (performance.now() - starttime));
-    console.log('now:'+ performance.now());
-    console.log('################');
-    */
     const ind = data.indexOf(data.filter((item) => item.key === key)[0]);
 
     if (data[ind].hide === "1") {
@@ -149,39 +148,27 @@ function MemCards({ navigation }) {
   }
 
   function restartGame() {
-    
-    console.log('time:' + time);
-    console.log('clocktimer:' + clocktimer);
-   // clearInterval(clocktimer);
-    setClocktimer([]);
     setPrevCardKey(null);
     setMatchCards([]);
     setSteps(0);
     setTime(0);
-    startgame();
     setGamerun(false);
-    console.log('clocktimer:' + clocktimer);
+    startgame();
   }
 
-  function startTimer() {
-    const xxx = setInterval( () => {checkTime();},980);
-    setClocktimer([...clocktimer, xxx]);
+  function checkTime() {
+    console.log("********");
+    console.log("gamerun:" + gamerun);
+    console.log("time:" + time);
+    console.log("clocktimer:" + clocktimer);
+    console.log("starttime:" + starttime);
+    console.log("diff:" + (performance.now() - starttime));
+    console.log("now:" + performance.now());
+    console.log("********");
     
   }
 
-  function checkTime(){
-    console.log('********');
-    console.log('gamerun:' + gamerun);
-    console.log('time:' + time);
-    console.log('clocktimer:' + clocktimer);
-    console.log('starttime:' + starttime);
-    console.log('diff:' + (performance.now() - starttime));
-    console.log('now:'+ performance.now());
-    console.log('********');
-    //setTime(performance.now() - starttime);
-  }
-
-    //Formated time value
+  //Formated time value
   function msToTime(duration) {
     let s = parseInt((duration / 1000) % 60);
     let m = parseInt((duration / (1000 * 60)) % 60);
@@ -202,7 +189,13 @@ function MemCards({ navigation }) {
         <Button
           title="Back"
           style={style.headerBtn}
-          onPress={() => navigation.navigate("Games")}
+          onPress={() => {
+            clocktimer.forEach(() => {
+              clearInterval(clocktimer.shift());
+            });
+            setGamerun(false);
+            navigation.navigate("Games");
+          }}
         />
         <Text>MemoryGame</Text>
         <Button
@@ -212,7 +205,7 @@ function MemCards({ navigation }) {
         />
       </View>
       <View style={style.info}>
-        <Text style={style.infoText}>Time: { msToTime(time) }</Text>
+        <Text style={style.infoText}>Time: {msToTime(time)}</Text>
         <Text style={style.infoText}>Steps: {steps}</Text>
         <Text style={style.infoText}>Score </Text>
       </View>
