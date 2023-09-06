@@ -8,11 +8,16 @@ import {
   Dimensions,
   Alert, 
   Modal,
-  Pressable
+  Pressable,
+  Image
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelector, useDispatch } from "react-redux";
 import { increment } from "../../reducers/counter";
+
+
+import { FontAwesome  } from "@expo/vector-icons"; // use FontAwesome from the expo vector icons
+
 
 import Card from "./card";
 
@@ -34,6 +39,8 @@ function MemCards({ navigation }) {
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
 
+  let CardSource = FontAwesome ; // set FontAwesome as the default icon source
+  let sizeIcon = 30;
 
   useEffect(() => {
     setStartModalVisible(true);
@@ -236,20 +243,69 @@ function MemCards({ navigation }) {
         <View style={style.centeredView}>
           <View style={style.modalView}>
             <Text style={style.modalText}>Choose Type of Cards!</Text>
-            <Text style={style.modalText}> </Text>
-            <Text style={style.modalText}>Flags</Text>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: '3%',
+              }}>
+                <Image style={style.modalFlag}  source={{uri: flagsBase[0].flag,}} />
+                <Image style={style.modalFlag}  source={{uri: flagsBase[1].flag,}} />
+                <Image style={style.modalFlag}  source={{uri: flagsBase[3].flag,}} />
+            </View>
             <Pressable
               style={[style.button, style.buttonClose]}
               onPress={() => chooseTypeOfCards('flags')}>
               <Text style={style.textStyle}>Flags</Text>
             </Pressable>
-            <Text style={style.modalText}>Pets</Text>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: '3%',
+                marginTop: '3%'
+              }}>
+                <Image style={style.modalPet}  source={{uri: petsbase[0].flag}} />
+                <Image style={style.modalPet}  source={{uri: petsbase[1].flag,}} />
+                <Image style={style.modalPet}  source={{uri: petsbase[3].flag,}} />
+            </View>
             <Pressable
               style={[style.button, style.buttonClose]}
               onPress={() => chooseTypeOfCards('pets')}>
               <Text style={style.textStyle}>Pets</Text>
             </Pressable>
-            <Text style={style.modalText}>Symbols</Text>
+            <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: '3%',
+                marginTop: '3%'
+              }}>
+            <CardSource
+                name='twitter'
+                size= {sizeIcon}
+                color='#2AA4F4'
+                style={{
+                  marginLeft: '3%',
+                  borderColor: 'grey',
+                }}
+                />  
+              <CardSource
+                name='github'
+                size = {sizeIcon}
+                color='#000000'
+                style={{
+                  marginLeft: '3%',
+                  borderColor: 'grey',
+                }}
+                />  
+              <CardSource
+                name='send'
+                size= {sizeIcon}
+                color='#1c7cd6'
+                style={{
+                  marginLeft: '3%',
+                  borderColor: 'grey',
+                }}
+                />
+            </View>
             <Pressable
               style={[style.button, style.buttonClose]}
               onPress={() => chooseTypeOfCards('icons')}>
@@ -465,6 +521,17 @@ const style = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
+  modalFlag: {
+    width:  30 ,
+    height: 20 ,
+    marginLeft: 7
+  },
+  modalPet: {
+    width:  30 ,
+    height: 30 ,
+    marginLeft: 7,
+    borderColor: 'grey'
+  }
 });
 
 export default MemCards;
