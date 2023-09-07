@@ -243,74 +243,66 @@ function MemCards({ navigation }) {
         <View style={style.centeredView}>
           <View style={style.modalView}>
             <Text style={style.modalText}>Choose Type of Cards!</Text>
-            <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginBottom: '3%',
-              }}>
-                <Image style={style.modalFlag}  source={{uri: flagsBase[0].flag,}} />
-                <Image style={style.modalFlag}  source={{uri: flagsBase[1].flag,}} />
-                <Image style={style.modalFlag}  source={{uri: flagsBase[3].flag,}} />
+            <View  style={ style.modalBlock}>
+              <View style={ style.modalSymbolsBlock }>
+                  <Image style={style.modalFlag}  source={{uri: flagsBase[0].flag,}} />
+                  <Image style={style.modalFlag}  source={{uri: flagsBase[1].flag,}} />
+                  <Image style={style.modalFlag}  source={{uri: flagsBase[3].flag,}} />
+              </View>
+              <Pressable
+                style={[style.button, style.buttonClose]}
+                onPress={() => chooseTypeOfCards('flags')}>
+                <Text style={style.textStyle}>Flags</Text>
+              </Pressable>
             </View>
-            <Pressable
-              style={[style.button, style.buttonClose]}
-              onPress={() => chooseTypeOfCards('flags')}>
-              <Text style={style.textStyle}>Flags</Text>
-            </Pressable>
-            <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginBottom: '3%',
-                marginTop: '3%'
-              }}>
-                <Image style={style.modalPet}  source={{uri: petsbase[0].flag}} />
-                <Image style={style.modalPet}  source={{uri: petsbase[1].flag,}} />
-                <Image style={style.modalPet}  source={{uri: petsbase[3].flag,}} />
+            <View  style={ style.modalBlock}>
+              <View style={ style.modalSymbolsBlock }>
+                  <Image style={style.modalPet}  source={{uri: petsbase[0].flag}} />
+                  <Image style={style.modalPet}  source={{uri: petsbase[1].flag,}} />
+                  <Image style={style.modalPet}  source={{uri: petsbase[3].flag,}} />
+              </View>
+              <Pressable
+                style={[style.button, style.buttonClose]}
+                onPress={() => chooseTypeOfCards('pets')}>
+                <Text style={style.textStyle}>Pets</Text>
+              </Pressable>
             </View>
-            <Pressable
-              style={[style.button, style.buttonClose]}
-              onPress={() => chooseTypeOfCards('pets')}>
-              <Text style={style.textStyle}>Pets</Text>
-            </Pressable>
-            <View style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginBottom: '3%',
-                marginTop: '3%'
-              }}>
-            <CardSource
-                name='twitter'
-                size= {sizeIcon}
-                color='#2AA4F4'
-                style={{
-                  marginLeft: '3%',
-                  borderColor: 'grey',
-                }}
-                />  
+            <View  style={ style.modalBlock}>
+              <View style={ style.modalSymbolsBlock }>
               <CardSource
-                name='github'
-                size = {sizeIcon}
-                color='#000000'
-                style={{
-                  marginLeft: '3%',
-                  borderColor: 'grey',
-                }}
-                />  
-              <CardSource
-                name='send'
-                size= {sizeIcon}
-                color='#1c7cd6'
-                style={{
-                  marginLeft: '3%',
-                  borderColor: 'grey',
-                }}
-                />
+                  name='twitter'
+                  size= {sizeIcon}
+                  color='#2AA4F4'
+                  style={{
+                    marginLeft: '3%',
+                    borderColor: 'grey',
+                  }}
+                  />  
+                <CardSource
+                  name='github'
+                  size = {sizeIcon}
+                  color='#000000'
+                  style={{
+                    marginLeft: '3%',
+                    borderColor: 'grey',
+                  }}
+                  />  
+                <CardSource
+                  name='send'
+                  size= {sizeIcon}
+                  color='#1c7cd6'
+                  style={{
+                    marginLeft: '3%',
+                    borderColor: 'grey',
+                  }}
+                  />
+              </View>
+              <Pressable
+                style={[style.button, style.buttonClose]}
+                onPress={() => chooseTypeOfCards('icons')}>
+                <Text style={style.textStyle}>Symbols</Text>
+              </Pressable>
             </View>
-            <Pressable
-              style={[style.button, style.buttonClose]}
-              onPress={() => chooseTypeOfCards('icons')}>
-              <Text style={style.textStyle}>Symbols</Text>
-            </Pressable>
           </View>
         </View>
       </Modal>
@@ -520,6 +512,25 @@ const style = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  modalBlock: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      marginBottom: '3%',
+      borderTopColor: 'black',
+      borderTopWidth: 1,
+      paddingTop: '2%',
+      paddingBottom: '2%',
+      paddingLeft: '10%',
+      paddingRight: '10%'
+  },
+  modalSymbolsBlock:{
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: '3%',
+    marginTop: '3%'
   },
   modalFlag: {
     width:  30 ,
