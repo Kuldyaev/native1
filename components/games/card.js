@@ -59,7 +59,7 @@ function Card({ hide, touchCard, id, flag, ind, name, type, color }) {
       name={name}
       size={sizeIcon}
       color={color}
-      style={style.imageCirlce}
+      style={style.imageCirlceBack}
       />
     };
     text = (
@@ -67,7 +67,9 @@ function Card({ hide, touchCard, id, flag, ind, name, type, color }) {
       <Text
         style={{
           color: "black",
-          marginLeft: "30%",
+          width: windowWidth * 0.22,
+          textAlign: 'center',
+          marginTop: windowWidth * 0.01,
         }}
       >
         {name}
@@ -129,6 +131,7 @@ const style = StyleSheet.create({
     width: windowWidth * 0.22,
     height: windowWidth * 0.22,
     display: "flex",
+    justifyContent: 'space-around',
     alignContent: "center",
     justifyContent: "center",
     border: "1px solid black",
@@ -157,8 +160,26 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     ...Platform.select({
       ios: {
-          marginLeft: '15%',
-          marginTop: '15%',
+        marginLeft: windowWidth * 0.025,
+        marginTop: windowWidth * 0.01,
+      },
+      android: {
+        marginLeft: '15%',
+        marginTop: '15%',
+      },
+  }),
+  },
+  imageCirlceBack: {
+    flex: 1,
+    display: 'flex',
+    alignItems: "center",
+    width: '100%',
+    flex: 18,
+    justifyContent: 'space-around',
+    ...Platform.select({
+      ios: {
+          marginLeft: windowWidth * 0.035,
+          marginTop: windowWidth * 0.035,
       },
       android: {
         marginLeft: '15%',

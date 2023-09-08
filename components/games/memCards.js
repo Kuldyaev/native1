@@ -35,6 +35,7 @@ function MemCards({ navigation }) {
   const [time, setTime] = useState(0);
   const [gamerun, setGamerun] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(false);
+  const [finalModalVisible, setFinalModalVisible] = useState(false);
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
@@ -125,6 +126,7 @@ function MemCards({ navigation }) {
       if (data[prevCardKey].id === data[ind].id) {
         if (matchCards.length === 7) {
           console.log("final");
+          setFinalModalVisible(true);
         }
         setMatchCards([...matchCards, data[ind].id]);
         setPrevCardKey(null);
@@ -160,15 +162,7 @@ function MemCards({ navigation }) {
 
     
     console.log("# time:" + time);
-    /*
-    console.log("********");
-    console.log("gamerun:" + gamerun);
-    console.log("clocktimer:" + clocktimer);
-    console.log("starttime:" + starttime);
-    console.log("diff:" + (performance.now() - starttime));
-    console.log("now:" + performance.now());
-    console.log("********");
-    */
+
   }
 
   //Formated time value
@@ -190,7 +184,6 @@ function MemCards({ navigation }) {
     } else {
       cardsBase = chooseCardsFromDeck(flagsBase, 8);
     }
-    console.log(cardsBase);
     let clone = [];
     clone.push(...cardsBase);
     shuffle(clone);
@@ -212,7 +205,6 @@ function MemCards({ navigation }) {
     } else {
       cardsBase = chooseCardsFromDeck(flagsBase, 8);
     }
-    console.log(cardsBase);
     let clone = [];
     clone.push(...cardsBase);
     shuffle(clone);
@@ -306,7 +298,20 @@ function MemCards({ navigation }) {
           </View>
         </View>
       </Modal>
-
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={finalModalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setFinalModalVisible(!finalModalVisible);
+        }}>
+        <View style={style.centeredView}>
+          <View style={style.modalView}>
+            <Text style={style.modalText}>FINAL</Text>
+          </View>
+        </View>   
+      </Modal>
 
 
       <View style={style.header}>
