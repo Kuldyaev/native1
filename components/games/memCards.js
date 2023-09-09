@@ -39,6 +39,7 @@ function MemCards({ navigation }) {
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
+  const finalFlags = useSelector((state) => state.finalFlags);
 
   let CardSource = FontAwesome ; // set FontAwesome as the default icon source
   let sizeIcon = 30;
@@ -309,6 +310,8 @@ function MemCards({ navigation }) {
         <View style={style.centeredView}>
           <View style={style.modalView}>
             <Text style={style.modalText}>FINAL</Text>
+
+            <Image style={style.modalPet}  source={ finalFlags } />
           </View>
         </View>   
       </Modal>
