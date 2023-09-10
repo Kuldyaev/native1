@@ -3,7 +3,6 @@ import flagsReducer from '../reducers/flags';
 import counterReducer from '../reducers/counter';
 import iconsReducer from '../reducers/iconsCards';
 import petsReduser from '../reducers/pets';
-import finalFlagsReduser from '../reducers/finalFlags';
 
 export default configureStore({
   reducer: {
@@ -11,6 +10,5 @@ export default configureStore({
     counter: counterReducer,
     flags: flagsReducer,
     pets: petsReduser,
-    finalFlags: finalFlagsReduser
   },
 })

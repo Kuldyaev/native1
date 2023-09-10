@@ -1,23 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
+  Animated,
   StyleSheet,
   Button,
   SafeAreaView,
   View,
   Text,
   Dimensions,
-  Alert, 
+  Alert,
   Modal,
   Pressable,
-  Image
+  Image,
+  
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelector, useDispatch } from "react-redux";
-import { increment } from "../../reducers/counter";
 
-
-import { FontAwesome  } from "@expo/vector-icons"; // use FontAwesome from the expo vector icons
-
+import { FontAwesome } from "@expo/vector-icons"; // use FontAwesome from the expo vector icons
+import MarqueeText from 'react-native-marquee';   // бегущая строка
 
 import Card from "./card";
 
@@ -29,7 +29,7 @@ function MemCards({ navigation }) {
   const [prevCardKey, setPrevCardKey] = useState(null);
   const [matchCards, setMatchCards] = useState([]);
   const [steps, setSteps] = useState(0);
-  const [type, setType] = useState('');
+  const [type, setType] = useState("");
   const [starttime, setStarttime] = useState(0);
   const [clocktimer, setClocktimer] = useState([]);
   const [time, setTime] = useState(0);
@@ -39,19 +39,18 @@ function MemCards({ navigation }) {
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
-  const finalFlags = useSelector((state) => state.finalFlags);
 
-  let CardSource = FontAwesome ; // set FontAwesome as the default icon source
+ // const animatedLine = useRef(new Animated.Value(200)).current
+  
+  let CardSource = FontAwesome; // set FontAwesome as the default icon source
   let sizeIcon = 30;
 
   useEffect(() => {
     setStartModalVisible(true);
+  //  startAnimate();
   }, []);
 
-  useEffect(() => {
-   
-  }, [type]);
-
+  useEffect(() => {}, [type]);
 
   useEffect(() => {
     if (gamerun) {
@@ -65,8 +64,12 @@ function MemCards({ navigation }) {
       });
     }
   }, [gamerun]);
+/*
+  const startAnimate = () => {
+    Animated.timing(animatedLine, { toValue: -1100, useNativeDriver: true,  duration: 35000 }).start()
+}
+*/
 
-  
   function chooseCardsFromDeck(deck, quantity) {
     let newCards = Array.from(deck);
     while (newCards.length > quantity) {
@@ -105,7 +108,6 @@ function MemCards({ navigation }) {
   }
 
   function touchCard(key) {
-    checkTime();                   ////////////   удалить потом
     if (!gamerun) {
       setGamerun(true);
       setStarttime(performance.now());
@@ -126,7 +128,11 @@ function MemCards({ navigation }) {
     } else {
       if (data[prevCardKey].id === data[ind].id) {
         if (matchCards.length === 7) {
-          console.log("final");
+
+            /////**************************************/////
+
+
+          setGamerun(false);
           setFinalModalVisible(true);
         }
         setMatchCards([...matchCards, data[ind].id]);
@@ -158,14 +164,6 @@ function MemCards({ navigation }) {
     setGamerun(false);
     startGame();
   }
-
-  function checkTime() {
-
-    
-    console.log("# time:" + time);
-
-  }
-
   //Formated time value
   function msToTime(duration) {
     let s = parseInt((duration / 1000) % 60);
@@ -175,12 +173,12 @@ function MemCards({ navigation }) {
     return m + ":" + s;
   }
   // Choose type of cards
-  function chooseTypeOfCards(type){
+  function chooseTypeOfCards(type) {
     setType(type);
     let cardsBase = [];
-    if (type==="icons") {
+    if (type === "icons") {
       cardsBase = iconsbase;
-    } else if (type==="pets"){  
+    } else if (type === "pets") {
       cardsBase = petsbase;
     } else {
       cardsBase = chooseCardsFromDeck(flagsBase, 8);
@@ -197,11 +195,11 @@ function MemCards({ navigation }) {
     setStartModalVisible(!startModalVisible);
   }
 
- function startGame(){
+  function startGame() {
     let cardsBase = [];
-    if (type==="icons") {
+    if (type === "icons") {
       cardsBase = iconsbase;
-    } else if (type==="pets"){  
+    } else if (type === "pets") {
       cardsBase = petsbase;
     } else {
       cardsBase = chooseCardsFromDeck(flagsBase, 8);
@@ -217,11 +215,11 @@ function MemCards({ navigation }) {
     setData(clone);
   }
 
-  const counter = useSelector((state) => state.counter.value);
+ // const counter = useSelector((state) => state.counter.value);
 
-  useEffect(() => {
+ /* useEffect(() => {
     dispatch(increment());
-  }, []);
+  }, []);  */
 
   return (
     <SafeAreaView style={style.container}>
@@ -230,69 +228,91 @@ function MemCards({ navigation }) {
         transparent={true}
         visible={startModalVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          Alert.alert("Modal has been closed.");
           setStartModalVisible(!startModalVisible);
-        }}>
+        }}
+      >
         <View style={style.centeredView}>
           <View style={style.modalView}>
             <Text style={style.modalText}>Choose Type of Cards!</Text>
-            <View  style={ style.modalBlock}>
-              <View style={ style.modalSymbolsBlock }>
-                  <Image style={style.modalFlag}  source={{uri: flagsBase[0].flag,}} />
-                  <Image style={style.modalFlag}  source={{uri: flagsBase[1].flag,}} />
-                  <Image style={style.modalFlag}  source={{uri: flagsBase[3].flag,}} />
+            <View style={style.modalBlock}>
+              <View style={style.modalSymbolsBlock}>
+                <Image
+                  style={style.modalFlag}
+                  source={{ uri: flagsBase[0].flag }}
+                />
+                <Image
+                  style={style.modalFlag}
+                  source={{ uri: flagsBase[1].flag }}
+                />
+                <Image
+                  style={style.modalFlag}
+                  source={{ uri: flagsBase[3].flag }}
+                />
               </View>
               <Pressable
                 style={[style.button, style.buttonClose]}
-                onPress={() => chooseTypeOfCards('flags')}>
+                onPress={() => chooseTypeOfCards("flags")}
+              >
                 <Text style={style.textStyle}>Flags</Text>
               </Pressable>
             </View>
-            <View  style={ style.modalBlock}>
-              <View style={ style.modalSymbolsBlock }>
-                  <Image style={style.modalPet}  source={{uri: petsbase[0].flag}} />
-                  <Image style={style.modalPet}  source={{uri: petsbase[1].flag,}} />
-                  <Image style={style.modalPet}  source={{uri: petsbase[3].flag,}} />
+            <View style={style.modalBlock}>
+              <View style={style.modalSymbolsBlock}>
+                <Image
+                  style={style.modalPet}
+                  source={{ uri: petsbase[0].flag }}
+                />
+                <Image
+                  style={style.modalPet}
+                  source={{ uri: petsbase[1].flag }}
+                />
+                <Image
+                  style={style.modalPet}
+                  source={{ uri: petsbase[3].flag }}
+                />
               </View>
               <Pressable
                 style={[style.button, style.buttonClose]}
-                onPress={() => chooseTypeOfCards('pets')}>
+                onPress={() => chooseTypeOfCards("pets")}
+              >
                 <Text style={style.textStyle}>Pets</Text>
               </Pressable>
             </View>
-            <View  style={ style.modalBlock}>
-              <View style={ style.modalSymbolsBlock }>
-              <CardSource
-                  name='twitter'
-                  size= {sizeIcon}
-                  color='#2AA4F4'
-                  style={{
-                    marginLeft: '3%',
-                    borderColor: 'grey',
-                  }}
-                  />  
+            <View style={style.modalBlock}>
+              <View style={style.modalSymbolsBlock}>
                 <CardSource
-                  name='github'
-                  size = {sizeIcon}
-                  color='#000000'
+                  name="twitter"
+                  size={sizeIcon}
+                  color="#2AA4F4"
                   style={{
-                    marginLeft: '3%',
-                    borderColor: 'grey',
+                    marginLeft: "3%",
+                    borderColor: "grey",
                   }}
-                  />  
+                />
                 <CardSource
-                  name='send'
-                  size= {sizeIcon}
-                  color='#1c7cd6'
+                  name="github"
+                  size={sizeIcon}
+                  color="#000000"
                   style={{
-                    marginLeft: '3%',
-                    borderColor: 'grey',
+                    marginLeft: "3%",
+                    borderColor: "grey",
                   }}
-                  />
+                />
+                <CardSource
+                  name="send"
+                  size={sizeIcon}
+                  color="#1c7cd6"
+                  style={{
+                    marginLeft: "3%",
+                    borderColor: "grey",
+                  }}
+                />
               </View>
               <Pressable
                 style={[style.button, style.buttonClose]}
-                onPress={() => chooseTypeOfCards('icons')}>
+                onPress={() => chooseTypeOfCards("icons")}
+              >
                 <Text style={style.textStyle}>Symbols</Text>
               </Pressable>
             </View>
@@ -304,18 +324,25 @@ function MemCards({ navigation }) {
         transparent={true}
         visible={finalModalVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setFinalModalVisible(!finalModalVisible);
-        }}>
+        }}
+      >
         <View style={style.centeredView}>
           <View style={style.modalView}>
             <Text style={style.modalText}>FINAL</Text>
-
-            <Image style={style.modalPet}  source={ finalFlags } />
+            <Image style={style.modalPet} source={require("../../assets/finish.png")} />
+            <Pressable
+              style={[style.button, style.buttonClose]}
+              onPress={() => { 
+                restartGame();
+                setFinalModalVisible(false);
+              }}
+            >
+              <Text style={style.textStyle}>OK</Text>
+            </Pressable>
           </View>
-        </View>   
+        </View>
       </Modal>
-
 
       <View style={style.header}>
         <Button
@@ -339,7 +366,7 @@ function MemCards({ navigation }) {
       <View style={style.info}>
         <Text style={style.infoText}>Time: {msToTime(time)}</Text>
         <Text style={style.infoText}>Steps: {steps}</Text>
-        <Text style={style.infoText}>Score {type}</Text>
+        <Text style={style.infoText}>Score:  </Text>
       </View>
       <LinearGradient
         colors={["#4c669f", "#3b5998", "#192f6a"]}
@@ -369,7 +396,16 @@ function MemCards({ navigation }) {
         </LinearGradient>
       </LinearGradient>
       <View style={style.footer}>
-        <Text style={style.footerText}>Footer</Text>
+        <MarqueeText
+          style={style.footerText}
+          speed={0.1}
+          marqueeOnStart={true}
+          loop={true}
+          delay={4000}
+          consecutive={true}
+        >
+          Need to uncover pairs of cards: if the images match, the cards remain open, if not - they are flipped back. The game will end when all the cards are uncovered.
+        </MarqueeText>
       </View>
     </SafeAreaView>
   );
@@ -417,16 +453,16 @@ const style = StyleSheet.create({
   },
   footer: {
     width: "100%",
-    height: "5%",
+    maxHeight: "5%",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
     padding: "1%",
     backgroundColor: "#2e3d49",
+    flex: 1,
   },
   footerText: {
-    color: "grey",
+   color: "grey",
   },
   desk: {
     width: "100%",
@@ -438,7 +474,6 @@ const style = StyleSheet.create({
   cardsdesk: {
     width: windowWidth,
     height: windowWidth,
-    //backgroundColor: "#aa7ecd",
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "row",
@@ -464,35 +499,19 @@ const style = StyleSheet.create({
     marginRight: "2%",
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -507,50 +526,50 @@ const style = StyleSheet.create({
     elevation: 2,
   },
   buttonOpen: {
-    backgroundColor: '#F194FF',
+    backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontWeight: "bold",
   },
   modalBlock: {
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      marginBottom: '3%',
-      borderTopColor: 'black',
-      borderTopWidth: 1,
-      paddingTop: '2%',
-      paddingBottom: '2%',
-      paddingLeft: '10%',
-      paddingRight: '10%'
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    marginBottom: "3%",
+    borderTopColor: "black",
+    borderTopWidth: 1,
+    paddingTop: "2%",
+    paddingBottom: "2%",
+    paddingLeft: "10%",
+    paddingRight: "10%",
   },
-  modalSymbolsBlock:{
-    display: 'flex',
-    flexDirection: 'row',
-    marginBottom: '3%',
-    marginTop: '3%'
+  modalSymbolsBlock: {
+    display: "flex",
+    flexDirection: "row",
+    marginBottom: "3%",
+    marginTop: "3%",
   },
   modalFlag: {
-    width:  30 ,
-    height: 20 ,
-    marginLeft: 7
+    width: 30,
+    height: 20,
+    marginLeft: 7,
   },
   modalPet: {
-    width:  30 ,
-    height: 30 ,
+    width: 30,
+    height: 30,
     marginLeft: 7,
-    borderColor: 'grey'
-  }
+    borderColor: "grey",
+  },
 });
 
 export default MemCards;
