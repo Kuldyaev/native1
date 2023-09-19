@@ -7,6 +7,10 @@ function Games({ navigation }) {
         title="MemoryCards"
         onPress={() => navigation.navigate("MemCards")}
       />
+      <Button
+        title="Snake"
+        onPress={() => navigation.navigate("Snake")}
+      />
     </View>
   );
 }
