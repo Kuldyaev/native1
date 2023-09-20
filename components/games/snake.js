@@ -9,6 +9,7 @@ import {
   Text,
   Dimensions,
   Alert,
+  TouchableWithoutFeedback
 } from "react-native";
 
 import Canvas, {Image as CanvasImage} from 'react-native-canvas';
@@ -19,36 +20,109 @@ const brick = Math.floor(windowWidth/24);
 
 function Snake({ navigation }) {
 /////**************************************/////
-    const ref = useRef(null);
-    
-    
+    const ref = useRef("s");
+    const [gamerun, setGamerun] = useState(false);
+    const [starttime, setStarttime] = useState(0);
+    const [clocktimer, setClocktimer] = useState([]);
+    const [time, setTime] = useState(0);
+    const [tick, setTick] = useState(0);
+    const [speed, setSpeed] = useState(1);
+    const [snake, setSnake] = useState([{x: 11, y:11},{x: 12, y:11},{x: 13, y:11}]);
+    const [direction, setDirection] = useState(1); // 0-влево, 1-вверх, 2-вправо, 3-вниз
+
+    var eee = 0;
 
     useEffect(() => {
       if (ref.current) {
         const ctx = ref.current.getContext('2d');
-
-  
         if (ctx) {
             ref.current.width =windowWidth;
             ref.current.height =windowWidth;
-
-            Alert.alert('xxx');
-
             ctx.fillStyle = 'darkgreen';
             ctx.fillRect(0, 0, windowWidth, windowWidth);
             ctx.fillStyle = 'green';
             ctx.fillRect(brick, brick,windowWidth-brick*2, windowWidth-brick*2);
-        
+            drawSnake();
+        } else {
+            Alert.alert('problem with this game');
         }
       }
-    }, [ref]);
+    }, );
+
+    useEffect(() => {
+        if (gamerun) {
+          const xxx = setInterval(async () => {
+            setTime(performance.now() - starttime);
+          }, 990);
+          const sss = setInterval(async () => {
+            gameprocess();
+          }, 100);
+          setClocktimer([...clocktimer, xxx, sss]);
+        } else {
+            clearIntervals();
+        }
+    }, [gamerun]);
+
+    useEffect(() => {
+        if (tick === 1) {
+            snackmove();
+        }
+    }, [tick]);
+
+    function gameprocess(){ 
+        eee++;
+        setTick(0);
+        if((eee + speed) >6 ){
+            eee = 0;
+            setTick(1);  
+        }
+    };
+
+    function snackmove() {
+        var newSnake = [];
+        var firstpart = {};
+            if(direction === 0){
+                firstpart.x =Number(snake[0].x-1);
+                firstpart.y = Number(snake[0].y); 
+            } else if ( direction === 1 ){
+                firstpart.x =Number(snake[0].x);
+                firstpart.y = Number(snake[0].y-1);
+            } else if ( direction === 2 ){
+                firstpart.x =Number(snake[0].x+1);
+                firstpart.y = Number(snake[0].y);
+            }  else {
+                firstpart.x =Number(snake[0].x);
+                firstpart.y = Number(snake[0].y+1);
+            }
+        newSnake.push(firstpart);
+        snake.forEach((item, index) => {
+            if (index < (snake.length-1)){
+                newSnake.push(item);
+            }
+        });
+        setSnake(newSnake);
+        drawSnake();
+    };
+
+    function clearIntervals(){
+        clocktimer.forEach(() => clearInterval(clocktimer.shift()));
+    }
+
+    function drawSnake() {
+        const ctx = ref.current.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = 'black';
+            for(let i=0; i<snake.length; i++){
+                ctx.fillRect(brick*snake[i].x , brick*snake[i].y, brick, brick);
+            }
+        } else {
+            Alert.alert('problem with this game Snake not draw');
+        }
+    };
   
-
-
-
     function restartGame() {
-        Alert.alert('Restart game btn');
-      }
+        setGamerun(!gamerun);
+    }
 
  /////**************************************/////
 
@@ -70,13 +144,16 @@ function Snake({ navigation }) {
         />
       </View>
       <View style={style.info}>
-        <Text style={style.infoText}>Time: 100</Text>
-        <Text style={style.infoText}>Steps: {brick}</Text>
-        <Text style={style.infoText}>Score:  </Text>
+        <Text style={style.infoText}>Time: {time}</Text>
+        <Text style={style.infoText}>Steps: {tick}</Text>
+        <Text style={style.infoText}>Speed: {speed} </Text>
       </View>
-      <View style={style.desk}>
+      <TouchableWithoutFeedback onPress={() => alert('Pressed!')}>
+      <View  style={style.desk}>    
         <Canvas ref={ref} width={windowWidth}  height={windowWidth} style={style.playDesk}  />
-      </View>    
+        </View>
+      </TouchableWithoutFeedback> 
+
       <View style={style.footer}>
         <MarqueeText
           style={style.footerText}
@@ -89,8 +166,6 @@ function Snake({ navigation }) {
           Control the snake using the arrow keys on the keyboard or touches on the touchscreen. The goal is to eat as many apples as possible. Avoid obstacles and the snake's own tail.
         </MarqueeText>
       </View>
-        
-
     </SafeAreaView>
   );
 }
