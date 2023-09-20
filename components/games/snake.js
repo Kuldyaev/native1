@@ -28,7 +28,7 @@ function Snake({ navigation }) {
     const [tick, setTick] = useState(0);
     const [speed, setSpeed] = useState(1);
     const [snake, setSnake] = useState([{x: 11, y:11},{x: 12, y:11},{x: 13, y:11}]);
-    const [direction, setDirection] = useState(1); // 0-влево, 1-вверх, 2-вправо, 3-вниз
+    const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
 
     var eee = 0;
 
@@ -124,6 +124,20 @@ function Snake({ navigation }) {
         setGamerun(!gamerun);
     }
 
+    function touchDesk (evt) {
+        if (gamerun) {
+            if(evt.nativeEvent.locationY < windowWidth/2  & (direction===0 || direction===2)){
+                setDirection(1);
+            } else if (evt.nativeEvent.locationY >= windowWidth/2  & (direction===0 || direction===2)){
+                setDirection(3);
+            } else if (evt.nativeEvent.locationX >= windowWidth/2  & (direction===1 || direction===3)){
+                setDirection(2);
+            } else if (evt.nativeEvent.locationX < windowWidth/2  & (direction===1 || direction===3)){
+                setDirection(0);
+            }
+        }
+    }
+
  /////**************************************/////
 
   return (
@@ -148,7 +162,7 @@ function Snake({ navigation }) {
         <Text style={style.infoText}>Steps: {tick}</Text>
         <Text style={style.infoText}>Speed: {speed} </Text>
       </View>
-      <TouchableWithoutFeedback onPress={() => alert('Pressed!')}>
+      <TouchableWithoutFeedback onPress={(evt) => touchDesk(evt)}>
       <View  style={style.desk}>    
         <Canvas ref={ref} width={windowWidth}  height={windowWidth} style={style.playDesk}  />
         </View>
