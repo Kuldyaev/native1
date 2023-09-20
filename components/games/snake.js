@@ -27,6 +27,7 @@ function Snake({ navigation }) {
         const ctx = ref.current.getContext('2d');
   
         if (ctx) {
+
           Alert.alert('Canvas is ready');
         }
       }
@@ -64,9 +65,9 @@ function Snake({ navigation }) {
         <Text style={style.infoText}>Steps: 5</Text>
         <Text style={style.infoText}>Score:  </Text>
       </View>
-
-      <Canvas ref={ref} style={{ width: '100%', height: '50%', backgroundColor: 'black' }} />
-
+      <View style={style.desk}>
+        <Canvas ref={ref} style={style.playDesk} />
+      </View>    
       <View style={style.footer}>
         <MarqueeText
           style={style.footerText}
@@ -76,7 +77,7 @@ function Snake({ navigation }) {
           delay={4000}
           consecutive={true}
         >
-          Need to uncover pairs of cards: if the images match, the cards remain open, if not - they are flipped back. The game will end when all the cards are uncovered.
+          Control the snake using the arrow keys on the keyboard or touches on the touchscreen. The goal is to eat as many apples as possible. Avoid obstacles and the snake's own tail.
         </MarqueeText>
       </View>
         
@@ -145,6 +146,11 @@ const style = StyleSheet.create({
     justifyContent: "center",
     flexGrow: "1",
   },
+  playDesk: {
+    width: windowWidth, 
+    height: windowWidth,  
+    backgroundColor: 'black',
+  }
  
 });
 
