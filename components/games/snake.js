@@ -8,27 +8,37 @@ import {
   View,
   Text,
   Dimensions,
-  Alert
+  Alert,
 } from "react-native";
 
-import Canvas from 'react-native-canvas';
+import Canvas, {Image as CanvasImage} from 'react-native-canvas';
 import MarqueeText from 'react-native-marquee';   // бегущая строка
 
-
-
 const windowWidth = Dimensions.get("window").width;
+const brick = Math.floor(windowWidth/24);
 
 function Snake({ navigation }) {
 /////**************************************/////
     const ref = useRef(null);
+    
+    
 
     useEffect(() => {
       if (ref.current) {
         const ctx = ref.current.getContext('2d');
+
   
         if (ctx) {
+            ref.current.width =windowWidth;
+            ref.current.height =windowWidth;
 
-          Alert.alert('Canvas is ready');
+            Alert.alert('xxx');
+
+            ctx.fillStyle = 'darkgreen';
+            ctx.fillRect(0, 0, windowWidth, windowWidth);
+            ctx.fillStyle = 'green';
+            ctx.fillRect(brick, brick,windowWidth-brick*2, windowWidth-brick*2);
+        
         }
       }
     }, [ref]);
@@ -44,7 +54,6 @@ function Snake({ navigation }) {
 
   return (
     <SafeAreaView style={style.container}>
-
       <View style={style.header}>
         <Button
           title="Back"
@@ -62,11 +71,11 @@ function Snake({ navigation }) {
       </View>
       <View style={style.info}>
         <Text style={style.infoText}>Time: 100</Text>
-        <Text style={style.infoText}>Steps: 5</Text>
+        <Text style={style.infoText}>Steps: {brick}</Text>
         <Text style={style.infoText}>Score:  </Text>
       </View>
       <View style={style.desk}>
-        <Canvas ref={ref} style={style.playDesk} />
+        <Canvas ref={ref} width={windowWidth}  height={windowWidth} style={style.playDesk}  />
       </View>    
       <View style={style.footer}>
         <MarqueeText
@@ -147,9 +156,10 @@ const style = StyleSheet.create({
     flexGrow: "1",
   },
   playDesk: {
-    width: windowWidth, 
-    height: windowWidth,  
     backgroundColor: 'black',
+    width: windowWidth,
+    height: windowWidth,
+
   }
  
 });
