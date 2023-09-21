@@ -20,10 +20,8 @@ function Snake({ navigation }) {
 /////**************************************/////
     const ref = useRef("s");
     const [gamerun, setGamerun] = useState(false);
-    const [starttime, setStarttime] = useState(0);
-    const [clocktimer, setClocktimer] = useState([]);
+   // const [starttime, setStarttime] = useState(0);
     const [time, setTime] = useState(0);
-    const [tick, setTick] = useState(0);
     const [score, setScore] = useState(0);
     const [speed, setSpeed] = useState(1);
     const [snake, setSnake] = useState([{x: 11, y:11},{x: 12, y:11},{x: 13, y:11}]);
@@ -32,8 +30,10 @@ function Snake({ navigation }) {
         y:  Math.floor(Math.random() * 7)+1, 
     });
     const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
+    const [tick, setTick] = useState(0);
 
     var eee = 0;
+    var intervals = [];
 
     useEffect(() => {
       if (ref.current) {
@@ -51,20 +51,17 @@ function Snake({ navigation }) {
             Alert.alert('problem with this game');
         }
       }
-    }, );
+    },[]);
 
     useEffect(() => {
         if (gamerun) {
-          const xxx = setInterval(async () => {
-            setTime(performance.now() - starttime);
-          }, 990);
+            const starttime = performance.now();
           const sss = setInterval(async () => {
+            setTime(performance.now() - starttime);
             gameprocess();
           }, 100);
-          setClocktimer([...clocktimer, xxx, sss]);
-        } else {
-            clearIntervals();
-        }
+          intervals = ([...intervals, sss]);
+        } 
 
         return () => {
             clearIntervals();
@@ -72,18 +69,16 @@ function Snake({ navigation }) {
     }, [gamerun]);
 
     useEffect(() => {
-        if (tick === 1) {
-            snackmove();
-            
-        }
+        snackmove(); 
     }, [tick]);
+
 
     function gameprocess(){ 
         eee++;
-        setTick(0);
+        setTick(0);      
         if((eee + speed) >6 ){
             eee = 0;
-            setTick(1);  
+            setTick(1); 
         }
     };
 
@@ -107,20 +102,20 @@ function Snake({ navigation }) {
     
        if (newHead.x<1 || newHead.x>23 || newHead.y<1 || newHead.y>23 ){
         console.log('finish');
-        clearIntervals();
+        setGamerun(false);
        } else if (newHead.x === food.x & newHead.y === food.y){
         setScore(score + 1);
-        newFood();        
+        newFood();    
+        drawFood();    
        } else {
         newSnake.pop();
        }
         setSnake(newSnake);
         drawSnake();
-        drawFood();
     };
 
     function clearIntervals(){
-        clocktimer.forEach(() => clearInterval(clocktimer.shift()));
+        intervals.forEach(() => clearInterval(intervals.shift()));
     }
 
     function newFood() {
