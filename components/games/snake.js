@@ -26,8 +26,13 @@ function Snake({ navigation }) {
     const [clocktimer, setClocktimer] = useState([]);
     const [time, setTime] = useState(0);
     const [tick, setTick] = useState(0);
+    const [score, setScore] = useState(0);
     const [speed, setSpeed] = useState(1);
     const [snake, setSnake] = useState([{x: 11, y:11},{x: 12, y:11},{x: 13, y:11}]);
+    const [food, setFood]   =  useState({
+        x:  Math.floor(Math.random() * 6)+11,
+        y:  Math.floor(Math.random() * 7)+1, 
+    });
     const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
 
     var eee = 0;
@@ -42,7 +47,8 @@ function Snake({ navigation }) {
             ctx.fillRect(0, 0, windowWidth, windowWidth);
             ctx.fillStyle = 'green';
             ctx.fillRect(brick, brick,windowWidth-brick*2, windowWidth-brick*2);
-            drawSnake();
+            drawSnake(); 
+            drawFood();
         } else {
             Alert.alert('problem with this game');
         }
@@ -79,33 +85,46 @@ function Snake({ navigation }) {
     };
 
     function snackmove() {
-        var newSnake = [];
-        var firstpart = {};
+        var newSnake = snake;
+        var newHead = {};
             if(direction === 0){
-                firstpart.x =Number(snake[0].x-1);
-                firstpart.y = Number(snake[0].y); 
+                newHead.x =Number(snake[0].x-1);
+                newHead.y = Number(snake[0].y); 
             } else if ( direction === 1 ){
-                firstpart.x =Number(snake[0].x);
-                firstpart.y = Number(snake[0].y-1);
+                newHead.x =Number(snake[0].x);
+                newHead.y = Number(snake[0].y-1);
             } else if ( direction === 2 ){
-                firstpart.x =Number(snake[0].x+1);
-                firstpart.y = Number(snake[0].y);
+                newHead.x =Number(snake[0].x+1);
+                newHead.y = Number(snake[0].y);
             }  else {
-                firstpart.x =Number(snake[0].x);
-                firstpart.y = Number(snake[0].y+1);
+                newHead.x =Number(snake[0].x);
+                newHead.y = Number(snake[0].y+1);
             }
-        newSnake.push(firstpart);
-        snake.forEach((item, index) => {
-            if (index < (snake.length-1)){
-                newSnake.push(item);
-            }
-        });
+        newSnake.unshift(newHead);
+
+       if (newHead.x === food.x & newHead.y === food.y){
+            setScore(score + 1);
+            newFood();        
+       } else {
+        newSnake.pop();
+       }
         setSnake(newSnake);
         drawSnake();
+        drawFood();
     };
 
     function clearIntervals(){
         clocktimer.forEach(() => clearInterval(clocktimer.shift()));
+    }
+
+    function newFood() {
+        var x = 0;
+        var y = 0;
+        do{
+            x = Math.floor(Math.random() * 22)+1;
+            y = Math.floor(Math.random() * 22)+1;
+        } while (foodInSnake(x, y));      
+        setFood({x:x, y:y});
     }
 
     function drawSnake() {
@@ -119,9 +138,29 @@ function Snake({ navigation }) {
             Alert.alert('problem with this game Snake not draw');
         }
     };
+
+    function drawFood(){
+        const ctx = ref.current.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(brick*food.x , brick*food.y, brick, brick);
+        } else {
+            Alert.alert('problem with this game Food not draw');
+        }
+    }
   
     function restartGame() {
         setGamerun(!gamerun);
+    }
+
+    function foodInSnake(x, y){
+        var match = false;
+        for (var i=0; i<snake.body; i++){
+            if (snake[i].x===x & snake[i].y===y){
+                match = true;
+            }
+        };
+        return match
     }
 
     function touchDesk (evt) {
@@ -159,7 +198,7 @@ function Snake({ navigation }) {
       </View>
       <View style={style.info}>
         <Text style={style.infoText}>Time: {time}</Text>
-        <Text style={style.infoText}>Steps: {tick}</Text>
+        <Text style={style.infoText}>Score: {score}</Text>
         <Text style={style.infoText}>Speed: {speed} </Text>
       </View>
       <TouchableWithoutFeedback onPress={(evt) => touchDesk(evt)}>
