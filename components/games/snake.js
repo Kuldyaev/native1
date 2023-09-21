@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
-import { useSelector, useDispatch } from "react-redux";
 import {
   StyleSheet,
   Button,
@@ -67,11 +65,16 @@ function Snake({ navigation }) {
         } else {
             clearIntervals();
         }
+
+        return () => {
+            clearIntervals();
+          };
     }, [gamerun]);
 
     useEffect(() => {
         if (tick === 1) {
             snackmove();
+            
         }
     }, [tick]);
 
@@ -101,10 +104,13 @@ function Snake({ navigation }) {
                 newHead.y = Number(snake[0].y+1);
             }
         newSnake.unshift(newHead);
-
-       if (newHead.x === food.x & newHead.y === food.y){
-            setScore(score + 1);
-            newFood();        
+    
+       if (newHead.x<1 || newHead.x>23 || newHead.y<1 || newHead.y>23 ){
+        console.log('finish');
+        clearIntervals();
+       } else if (newHead.x === food.x & newHead.y === food.y){
+        setScore(score + 1);
+        newFood();        
        } else {
         newSnake.pop();
        }
@@ -155,7 +161,7 @@ function Snake({ navigation }) {
 
     function foodInSnake(x, y){
         var match = false;
-        for (var i=0; i<snake.body; i++){
+        for (var i=0; i<snake.length; i++){
             if (snake[i].x===x & snake[i].y===y){
                 match = true;
             }
@@ -177,6 +183,15 @@ function Snake({ navigation }) {
         }
     }
 
+    //Formated time value
+  function msToTime(duration) {
+    let s = parseInt((duration / 1000) % 60);
+    let m = parseInt((duration / (1000 * 60)) % 60);
+    m = m < 10 ? "0" + m : m;
+    s = s < 10 ? "0" + s : s;
+    return m + ":" + s;
+  }
+
  /////**************************************/////
 
   return (
@@ -197,7 +212,7 @@ function Snake({ navigation }) {
         />
       </View>
       <View style={style.info}>
-        <Text style={style.infoText}>Time: {time}</Text>
+        <Text style={style.infoText}>Time: {msToTime(time)}</Text>
         <Text style={style.infoText}>Score: {score}</Text>
         <Text style={style.infoText}>Speed: {speed} </Text>
       </View>
