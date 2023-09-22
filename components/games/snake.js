@@ -8,8 +8,14 @@ import {
   Dimensions,
   Alert,
   TouchableWithoutFeedback,
+  Modal,
 } from "react-native";
-
+import { useSelector, useDispatch } from "react-redux";
+import { 
+    hideFinalModalVisibleSnakeGame,
+    showFinalModalVisibleSnakeGame
+  } from "./../../reducers/status"
+import FinalModal from './finalModal'
 import Canvas, {Image as CanvasImage} from 'react-native-canvas';
 import MarqueeText from 'react-native-marquee';   // бегущая строка
 
@@ -21,6 +27,7 @@ const brick = Math.floor(windowWidth/24);
 function Snake({ navigation }) {
 /////**************************************/////
     const ref = useRef("s");
+    const dispatch = useDispatch();
     const [gamerun, setGamerun] = useState(false);
     const [time, setTime] = useState(0);
     const [score, setScore] = useState(0);
@@ -33,6 +40,7 @@ function Snake({ navigation }) {
     const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
     const [tick, setTick] = useState(0);
     const [step, setStep] = useState(0);
+    const finalModalVisible = useSelector((state) => state.status.finalModalVisibleSnakeGame)
 
     var eee = 0;
     var intervals = [];
@@ -125,18 +133,17 @@ function Snake({ navigation }) {
         newSnake.unshift(newHead);
     
        if (newHead.x<1 || newHead.x>23 || newHead.y<1 || newHead.y>23 ){
-        console.log('finish');
-        setGamerun(false);
+            setGamerun(false);
+            dispatch(showFinalModalVisibleSnakeGame());
        } else if (newHead.x === food.x & newHead.y === food.y){
-        setScore(score + 1);
-        newFood();    
-          
+            setScore(score + 1);
+            newFood();          
        } else {
          removeSteps(newSnake.pop());
          drawFood(); 
          for (var i=1; i<newSnake.length; i++){
              if (newSnake[i].x===newHead.x & newSnake[i].y===newHead.y){
-                console.log('finish');
+                dispatch(showFinalModalVisibleSnakeGame());
                 setGamerun(false);
              }
          };
@@ -311,6 +318,16 @@ function Snake({ navigation }) {
 
   return (
     <SafeAreaView style={style.container}>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={finalModalVisible}
+            onRequestClose={() => {
+            dispatch(hideFinalModalVisibleSnakeGame());
+            }}
+        >
+            <FinalModal game={'snake'} />
+        </Modal>
       <View style={style.header}>
         <Button
           title="Back"

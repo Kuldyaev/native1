@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 export const statusReducer = createSlice({
   name: 'status',
   initialState: {
-    finalModalVisibleMemoryGame: false
+    finalModalVisibleMemoryGame: false,
+    finalModalVisibleSnakeGame: false,
   },
   reducers: {
     hideFinalModalVisibleMemoryGame: state => {
@@ -11,14 +12,22 @@ export const statusReducer = createSlice({
     },
     showFinalModalVisibleMemoryGame: state => {
       state.finalModalVisibleMemoryGame = true
-    }
+    },
+    hideFinalModalVisibleSnakeGame: state => {
+      state.finalModalVisibleSnakeGame = false
+    },
+    showFinalModalVisibleSnakeGame: state => {
+      state.finalModalVisibleSnakeGame = true
+    },
   }
 })
 
 // Action creators are generated for each case reducer function
 export const { 
   hideFinalModalVisibleMemoryGame, 
-  showFinalModalVisibleMemoryGame
+  showFinalModalVisibleMemoryGame,
+  hideFinalModalVisibleSnakeGame,
+  showFinalModalVisibleSnakeGame
 } = statusReducer.actions
 
 export default statusReducer.reducer

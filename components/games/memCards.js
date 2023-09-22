@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Animated,
   StyleSheet,
@@ -23,7 +23,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons"; // use FontAwesome from the expo vector icons
 import MarqueeText from 'react-native-marquee';   // бегущая строка
 
-import FinalModal from './finalModal'
+import FinalModal from './finalModal';
 import Card from "./card";
 
 const windowWidth = Dimensions.get("window").width;
@@ -43,7 +43,6 @@ function MemCards({ navigation }) {
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
-  const counter = useSelector((state) => state.counter);
   const finalModalVisible = useSelector((state) => state.status.finalModalVisibleMemoryGame)
 
   let CardSource = FontAwesome; // set FontAwesome as the default icon source
@@ -322,7 +321,7 @@ function MemCards({ navigation }) {
           dispatch(hideFinalModalVisibleMemoryGame());
         }}
       >
-       <FinalModal width={'ghgj'} />
+       <FinalModal game={'memory'} />
       </Modal>
 
       <View style={style.header}>

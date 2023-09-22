@@ -1,10 +1,21 @@
 import { View, Text, Pressable, Image, StyleSheet} from "react-native";
 import { useDispatch } from "react-redux";
-import { hideFinalModalVisibleMemoryGame } from "./../../reducers/status"
+import { 
+    hideFinalModalVisibleMemoryGame,
+    hideFinalModalVisibleSnakeGame
+} from "./../../reducers/status";
 
 function FinalModal(props){
 
     const dispatch = useDispatch();
+
+    function closeBtn() {
+        if (props.game === 'snake'){
+            dispatch(hideFinalModalVisibleSnakeGame());
+        } else if (props.game === 'memory'){
+            dispatch(hideFinalModalVisibleMemoryGame());
+        }
+    }
 
     return (
         <View style={style.centeredView}>
@@ -16,7 +27,7 @@ function FinalModal(props){
                 </View>
             <Pressable
                 style={[style.button]}
-                onPress={() => dispatch(hideFinalModalVisibleMemoryGame())}
+                onPress={() => closeBtn() }
             >
                 <Text style={style.textStyle}>OK</Text>
                 <Text style={style.textStyle}>{props.width}</Text>
