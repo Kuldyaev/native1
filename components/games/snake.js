@@ -32,10 +32,11 @@ function Snake({ navigation }) {
     });
     const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
     const [tick, setTick] = useState(0);
+    const [step, setStep] = useState(0);
 
     var eee = 0;
     var intervals = [];
-
+ 
     useEffect(() => {
       if (ref.current) {
         const ctx = ref.current.getContext('2d');
@@ -70,17 +71,37 @@ function Snake({ navigation }) {
     }, [gamerun]);
 
     useEffect(() => {
-        if(tick === 1){
+        if((step+speed)>6 ){
+            setStep(0);
             snackmove(); 
+        } else {
+            setStep(step+1);
         }
     }, [tick]);
 
+    useEffect(() => {
+        if(score>1 && speed<2){
+            setSpeed(2);
+        } else if(score>3 && speed<3){
+            setSpeed(3);
+        } else if(score>5 && speed<4){
+            setSpeed(4);
+        } else if(score>7 && speed<5){
+            setSpeed(5);
+        } else if(score>10 && speed<6){
+            setSpeed(6);
+        } else if(score>20 && speed<7){
+            setSpeed(7);
+        } 
+    }, [score])
+
 
     function gameprocess(){ 
-        eee++;
-        setTick(0);      
-        if((eee + speed) >6 ){
+        if(eee>0){    
             eee = 0;
+            setTick(0); 
+        } else {
+            eee++;
             setTick(1); 
         }
     };
