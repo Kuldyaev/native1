@@ -15,10 +15,15 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelector, useDispatch } from "react-redux";
+import { 
+  hideFinalModalVisibleMemoryGame, 
+  showFinalModalVisibleMemoryGame
+} from "./../../reducers/status"
 
 import { FontAwesome } from "@expo/vector-icons"; // use FontAwesome from the expo vector icons
 import MarqueeText from 'react-native-marquee';   // бегущая строка
 
+import FinalModal from './finalModal'
 import Card from "./card";
 
 const windowWidth = Dimensions.get("window").width;
@@ -35,19 +40,17 @@ function MemCards({ navigation }) {
   const [time, setTime] = useState(0);
   const [gamerun, setGamerun] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(false);
-  const [finalModalVisible, setFinalModalVisible] = useState(false);
   const flagsBase = useSelector((state) => state.flags);
   const iconsbase = useSelector((state) => state.icons);
   const petsbase = useSelector((state) => state.pets);
+  const counter = useSelector((state) => state.counter);
+  const finalModalVisible = useSelector((state) => state.status.finalModalVisibleMemoryGame)
 
- // const animatedLine = useRef(new Animated.Value(200)).current
-  
   let CardSource = FontAwesome; // set FontAwesome as the default icon source
   let sizeIcon = 30;
 
   useEffect(() => {
     setStartModalVisible(true);
-  //  startAnimate();
   }, []);
 
   useEffect(() => {}, [type]);
@@ -64,11 +67,9 @@ function MemCards({ navigation }) {
       });
     }
   }, [gamerun]);
-/*
-  const startAnimate = () => {
-    Animated.timing(animatedLine, { toValue: -1100, useNativeDriver: true,  duration: 35000 }).start()
-}
-*/
+
+  /////**************************************/////
+
 
   function chooseCardsFromDeck(deck, quantity) {
     let newCards = Array.from(deck);
@@ -128,12 +129,8 @@ function MemCards({ navigation }) {
     } else {
       if (data[prevCardKey].id === data[ind].id) {
         if (matchCards.length === 7) {
-
-            /////**************************************/////
-
-
           setGamerun(false);
-          setFinalModalVisible(true);
+          dispatch(showFinalModalVisibleMemoryGame());
         }
         setMatchCards([...matchCards, data[ind].id]);
         setPrevCardKey(null);
@@ -215,11 +212,9 @@ function MemCards({ navigation }) {
     setData(clone);
   }
 
- // const counter = useSelector((state) => state.counter.value);
-
- /* useEffect(() => {
-    dispatch(increment());
-  }, []);  */
+  function closeFinalModal(){
+    restartGame();
+  }
 
   return (
     <SafeAreaView style={style.container}>
@@ -324,24 +319,10 @@ function MemCards({ navigation }) {
         transparent={true}
         visible={finalModalVisible}
         onRequestClose={() => {
-          setFinalModalVisible(!finalModalVisible);
+          dispatch(hideFinalModalVisibleMemoryGame());
         }}
       >
-        <View style={style.centeredView}>
-          <View style={style.modalView}>
-            <Text style={style.modalText}>FINAL</Text>
-            <Image style={style.modalPet} source={require("../../assets/finish.png")} />
-            <Pressable
-              style={[style.button, style.buttonClose]}
-              onPress={() => { 
-                restartGame();
-                setFinalModalVisible(false);
-              }}
-            >
-              <Text style={style.textStyle}>OK</Text>
-            </Pressable>
-          </View>
-        </View>
+       <FinalModal width={'ghgj'} />
       </Modal>
 
       <View style={style.header}>
@@ -569,7 +550,7 @@ const style = StyleSheet.create({
     height: 30,
     marginLeft: 7,
     borderColor: "grey",
-  },
+  }
 });
 
 export default MemCards;
