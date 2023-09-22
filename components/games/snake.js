@@ -8,7 +8,6 @@ import {
   Dimensions,
   Alert,
   TouchableWithoutFeedback,
-  Image
 } from "react-native";
 
 import Canvas, {Image as CanvasImage} from 'react-native-canvas';
@@ -140,6 +139,7 @@ function Snake({ navigation }) {
     }
 
     function drawSnake() {
+        var lastBrick = snake.length-1;
         const ctx = ref.current.getContext('2d');
         if (ctx) {
             ctx.fillStyle = 'black';
@@ -186,8 +186,43 @@ function Snake({ navigation }) {
                     break;
             }
             ctx.fillStyle = 'black';
-            for(let i=1; i<snake.length; i++){
+            for(let i=1; i<lastBrick; i++){
                 ctx.fillRect(brick*snake[i].x , brick*snake[i].y, brick, brick);
+            }
+            ctx.fillStyle = 'green';
+            ctx.fillRect(brick*snake[lastBrick].x , brick*snake[lastBrick].y, brick, brick);
+            if (snake[lastBrick].x === snake[lastBrick-1].x){
+                if(snake[lastBrick].y - snake[lastBrick-1].y > 0){
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.moveTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y);
+                    ctx.lineTo(brick*snake[lastBrick].x+brick/2, brick*snake[lastBrick].y+brick);
+                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.moveTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y+brick);
+                    ctx.lineTo(brick*snake[lastBrick].x+brick/2, brick*snake[lastBrick].y);
+                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y+brick);
+                    ctx.fill();
+                }
+            } else if (snake[lastBrick].y === snake[lastBrick-1].y){
+                if(snake[lastBrick].x - snake[lastBrick-1].x > 0){
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.moveTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y);
+                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y+brick/2);
+                    ctx.lineTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y+brick);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.moveTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y);
+                    ctx.lineTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y+brick/2);
+                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y+brick);
+                    ctx.fill();
+                }
             }
         } else {
             Alert.alert('problem with this game Snake not draw');
@@ -195,16 +230,12 @@ function Snake({ navigation }) {
     };
 
     function drawFood(){
-       
-
-        const ctx = ref.current.getContext('2d');
-
+       const ctx = ref.current.getContext('2d');
         if (ctx) {
             ctx.fillStyle = 'red';
             ctx.beginPath();
             ctx.arc(brick*food.x+brick/2 , brick*food.y+brick/2, brick/2.1, 0, 2 * Math.PI);
             ctx.fill();
-           // ctx.stroke();
         } else {
             Alert.alert('problem with this game Food not draw');
         }
