@@ -30,9 +30,7 @@ const flagsReducer = createSlice({
     name: 'flags',
     initialState: initialState,
     reducers: {
-        increment: state => {
-            state.concat([{dsad:'fsfwef'}])
-          },
+       
     }
 });
 // Action creators are generated for each case reducer function

@@ -11,301 +11,436 @@ import {
   Modal,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { 
-    hideFinalModalVisibleSnakeGame,
-    showFinalModalVisibleSnakeGame
-  } from "./../../reducers/status"
-import FinalModal from './finalModal'
-import Canvas, {Image as CanvasImage} from 'react-native-canvas';
-import MarqueeText from 'react-native-marquee';   // бегущая строка
-
-
+import {
+  hideFinalModalVisibleSnakeGame,
+  showFinalModalVisibleSnakeGame,
+} from "./../../reducers/status";
+import FinalModal from "./finalModal";
+import Canvas, { Image as CanvasImage } from "react-native-canvas";
+import MarqueeText from "react-native-marquee"; // бегущая строка
 
 const windowWidth = Dimensions.get("window").width;
-const brick = Math.floor(windowWidth/24);
+const brick = Math.floor(windowWidth / 24);
 
 function Snake({ navigation }) {
-/////**************************************/////
-    const ref = useRef("s");
-    const dispatch = useDispatch();
-    const [gamerun, setGamerun] = useState(false);
-    const [time, setTime] = useState(0);
-    const [score, setScore] = useState(0);
-    const [speed, setSpeed] = useState(1);
-    const [snake, setSnake] = useState([{x: 11, y:11},{x: 12, y:11},{x: 13, y:11}]);
-    const [food, setFood]   =  useState({
-        x:  Math.floor(Math.random() * 6)+11,
-        y:  Math.floor(Math.random() * 7)+1, 
-    });
-    const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
-    const [tick, setTick] = useState(0);
-    const [step, setStep] = useState(0);
-    const finalModalVisible = useSelector((state) => state.status.finalModalVisibleSnakeGame)
+  /////**************************************/////
+  const ref = useRef("s");
+  const dispatch = useDispatch();
+  const [gamerun, setGamerun] = useState(false);
+  const [time, setTime] = useState(0);
+  const [score, setScore] = useState(0);
+  const [speed, setSpeed] = useState(1);
+  const [snake, setSnake] = useState([
+    { x: 11, y: 11 },
+    { x: 12, y: 11 },
+    { x: 13, y: 11 },
+  ]);
+  const [food, setFood] = useState({
+    x: Math.floor(Math.random() * 6) + 11,
+    y: Math.floor(Math.random() * 7) + 1,
+  });
+  const [direction, setDirection] = useState(0); // 0-влево, 1-вверх, 2-вправо, 3-вниз
+  const [tick, setTick] = useState(0);
+  const [step, setStep] = useState(0);
+  const finalModalVisible = useSelector(
+    (state) => state.status.finalModalVisibleSnakeGame
+  );
 
-    var eee = 0;
-    var intervals = [];
- 
-    useEffect(() => {
-      if (ref.current) {
-        const ctx = ref.current.getContext('2d');
-        if (ctx) {
-            ref.current.width =windowWidth;
-            ref.current.height =windowWidth;
-            ctx.fillStyle = 'darkgreen';
-            ctx.fillRect(0, 0, windowWidth, windowWidth);
-            ctx.fillStyle = 'green';
-            ctx.fillRect(brick, brick,windowWidth-brick*2, windowWidth-brick*2);
-            drawSnake(); 
-            drawFood();
-        } else {
-            Alert.alert('problem with this game');
+  var eee = 0;
+  var intervals = [];
+
+  useEffect(() => {
+    if (ref.current) {
+      const ctx = ref.current.getContext("2d");
+      if (ctx) {
+        ref.current.width = windowWidth;
+        ref.current.height = windowWidth;
+        ctx.fillStyle = "darkgreen";
+        ctx.fillRect(0, 0, windowWidth, windowWidth);
+        ctx.fillStyle = "green";
+        ctx.fillRect(
+          brick,
+          brick,
+          windowWidth - brick * 2,
+          windowWidth - brick * 2
+        );
+        drawSnake();
+        drawFood();
+      } else {
+        Alert.alert("problem with this game");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (gamerun) {
+      const starttime = performance.now();
+      const sss = setInterval(async () => {
+        setTime(performance.now() - starttime);
+        gameprocess();
+      }, 100);
+      intervals = [...intervals, sss];
+    }
+
+    return () => {
+      clearIntervals();
+    };
+  }, [gamerun]);
+
+  useEffect(() => {
+    if (step + speed > 6) {
+      setStep(0);
+      snackmove();
+    } else {
+      setStep(step + 1);
+    }
+  }, [tick]);
+
+  useEffect(() => {
+    if (score > 1 && speed < 2) {
+      setSpeed(2);
+    } else if (score > 3 && speed < 3) {
+      setSpeed(3);
+    } else if (score > 5 && speed < 4) {
+      setSpeed(4);
+    } else if (score > 7 && speed < 5) {
+      setSpeed(5);
+    } else if (score > 10 && speed < 6) {
+      setSpeed(6);
+    } else if (score > 20 && speed < 7) {
+      setSpeed(7);
+    }
+  }, [score]);
+
+  function gameprocess() {
+    if (eee > 0) {
+      eee = 0;
+      setTick(0);
+    } else {
+      eee++;
+      setTick(1);
+    }
+  }
+
+  function snackmove() {
+    var newSnake = snake;
+    var newHead = {};
+    if (direction === 0) {
+      newHead.x = Number(snake[0].x - 1);
+      newHead.y = Number(snake[0].y);
+    } else if (direction === 1) {
+      newHead.x = Number(snake[0].x);
+      newHead.y = Number(snake[0].y - 1);
+    } else if (direction === 2) {
+      newHead.x = Number(snake[0].x + 1);
+      newHead.y = Number(snake[0].y);
+    } else {
+      newHead.x = Number(snake[0].x);
+      newHead.y = Number(snake[0].y + 1);
+    }
+    newSnake.unshift(newHead);
+
+    if (newHead.x < 1 || newHead.x > 23 || newHead.y < 1 || newHead.y > 23) {
+      setGamerun(false);
+      dispatch(showFinalModalVisibleSnakeGame());
+    } else if ((newHead.x === food.x) & (newHead.y === food.y)) {
+      setScore(score + 1);
+      newFood();
+    } else {
+      removeSteps(newSnake.pop());
+      drawFood();
+      for (var i = 1; i < newSnake.length; i++) {
+        if ((newSnake[i].x === newHead.x) & (newSnake[i].y === newHead.y)) {
+          dispatch(showFinalModalVisibleSnakeGame());
+          setGamerun(false);
         }
       }
-    },[]);
+    }
+    setSnake(newSnake);
+    drawSnake();
+  }
 
-    useEffect(() => {
-        if (gamerun) {
-            const starttime = performance.now();
-          const sss = setInterval(async () => {
-            setTime(performance.now() - starttime);
-            gameprocess();
-          }, 100);
-          intervals = ([...intervals, sss]);
-        } 
+  function clearIntervals() {
+    intervals.forEach(() => clearInterval(intervals.shift()));
+  }
 
-        return () => {
-            clearIntervals();
-          };
-    }, [gamerun]);
+  function newFood() {
+    var x = 0;
+    var y = 0;
+    do {
+      x = Math.floor(Math.random() * 22) + 1;
+      y = Math.floor(Math.random() * 22) + 1;
+    } while (foodInSnake(x, y));
+    setFood({ x: x, y: y });
+  }
 
-    useEffect(() => {
-        if((step+speed)>6 ){
-            setStep(0);
-            snackmove(); 
+  function drawSnake() {
+    var lastBrick = snake.length - 1;
+    const ctx = ref.current.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "black";
+      ctx.beginPath();
+      ctx.arc(
+        brick * snake[0].x + brick / 2,
+        brick * snake[0].y + brick / 2,
+        brick / 2.1,
+        0,
+        2 * Math.PI
+      );
+      ctx.fill();
+
+      switch (direction) {
+        case 0:
+          ctx.fillRect(
+            brick * snake[0].x + brick / 2,
+            brick * snake[0].y,
+            brick / 2,
+            brick
+          );
+          ctx.fillStyle = "grey";
+          ctx.beginPath();
+          ctx.arc(
+            brick * snake[0].x + brick / 3,
+            brick * snake[0].y + brick / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          ctx.arc(
+            brick * snake[0].x + brick / 3,
+            brick * snake[0].y + (brick * 2) / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          break;
+        case 1:
+          ctx.fillRect(
+            brick * snake[0].x,
+            brick * snake[0].y + brick / 2,
+            brick,
+            brick / 2
+          );
+          ctx.fillStyle = "grey";
+          ctx.beginPath();
+          ctx.arc(
+            brick * snake[0].x + brick / 3,
+            brick * snake[0].y + brick / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          ctx.arc(
+            brick * snake[0].x + (brick * 2) / 3,
+            brick * snake[0].y + brick / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          break;
+        case 2:
+          ctx.fillRect(
+            brick * snake[0].x,
+            brick * snake[0].y,
+            brick / 2,
+            brick
+          );
+          ctx.fillStyle = "grey";
+          ctx.beginPath();
+          ctx.arc(
+            brick * snake[0].x + (brick * 2) / 3,
+            brick * snake[0].y + brick / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          ctx.arc(
+            brick * snake[0].x + (brick * 2) / 3,
+            brick * snake[0].y + (brick * 2) / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          break;
+        case 3:
+          ctx.fillRect(
+            brick * snake[0].x,
+            brick * snake[0].y,
+            brick,
+            brick / 2
+          );
+          ctx.fillStyle = "grey";
+          ctx.beginPath();
+          ctx.arc(
+            brick * snake[0].x + brick / 3,
+            brick * snake[0].y + (brick * 2) / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          ctx.arc(
+            brick * snake[0].x + (brick * 2) / 3,
+            brick * snake[0].y + (brick * 2) / 3,
+            1,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+          break;
+      }
+      ctx.fillStyle = "black";
+      for (let i = 1; i < lastBrick; i++) {
+        ctx.fillRect(brick * snake[i].x, brick * snake[i].y, brick, brick);
+      }
+      ctx.fillStyle = "green";
+      ctx.fillRect(
+        brick * snake[lastBrick].x,
+        brick * snake[lastBrick].y,
+        brick,
+        brick
+      );
+      if (snake[lastBrick].x === snake[lastBrick - 1].x) {
+        if (snake[lastBrick].y - snake[lastBrick - 1].y > 0) {
+          ctx.fillStyle = "black";
+          ctx.beginPath();
+          ctx.moveTo(brick * snake[lastBrick].x, brick * snake[lastBrick].y);
+          ctx.lineTo(
+            brick * snake[lastBrick].x + brick / 2,
+            brick * snake[lastBrick].y + brick
+          );
+          ctx.lineTo(
+            brick * snake[lastBrick].x + brick,
+            brick * snake[lastBrick].y
+          );
+          ctx.fill();
         } else {
-            setStep(step+1);
+          ctx.fillStyle = "black";
+          ctx.beginPath();
+          ctx.moveTo(
+            brick * snake[lastBrick].x,
+            brick * snake[lastBrick].y + brick
+          );
+          ctx.lineTo(
+            brick * snake[lastBrick].x + brick / 2,
+            brick * snake[lastBrick].y
+          );
+          ctx.lineTo(
+            brick * snake[lastBrick].x + brick,
+            brick * snake[lastBrick].y + brick
+          );
+          ctx.fill();
         }
-    }, [tick]);
-
-    useEffect(() => {
-        if(score>1 && speed<2){
-            setSpeed(2);
-        } else if(score>3 && speed<3){
-            setSpeed(3);
-        } else if(score>5 && speed<4){
-            setSpeed(4);
-        } else if(score>7 && speed<5){
-            setSpeed(5);
-        } else if(score>10 && speed<6){
-            setSpeed(6);
-        } else if(score>20 && speed<7){
-            setSpeed(7);
-        } 
-    }, [score])
-
-
-    function gameprocess(){ 
-        if(eee>0){    
-            eee = 0;
-            setTick(0); 
+      } else if (snake[lastBrick].y === snake[lastBrick - 1].y) {
+        if (snake[lastBrick].x - snake[lastBrick - 1].x > 0) {
+          ctx.fillStyle = "black";
+          ctx.beginPath();
+          ctx.moveTo(brick * snake[lastBrick].x, brick * snake[lastBrick].y);
+          ctx.lineTo(
+            brick * snake[lastBrick].x + brick,
+            brick * snake[lastBrick].y + brick / 2
+          );
+          ctx.lineTo(
+            brick * snake[lastBrick].x,
+            brick * snake[lastBrick].y + brick
+          );
+          ctx.fill();
         } else {
-            eee++;
-            setTick(1); 
+          ctx.fillStyle = "black";
+          ctx.beginPath();
+          ctx.moveTo(
+            brick * snake[lastBrick].x + brick,
+            brick * snake[lastBrick].y
+          );
+          ctx.lineTo(
+            brick * snake[lastBrick].x,
+            brick * snake[lastBrick].y + brick / 2
+          );
+          ctx.lineTo(
+            brick * snake[lastBrick].x + brick,
+            brick * snake[lastBrick].y + brick
+          );
+          ctx.fill();
         }
-    };
-
-    function snackmove() {
-        var newSnake = snake;
-        var newHead = {};
-            if(direction === 0){
-                newHead.x =Number(snake[0].x-1);
-                newHead.y = Number(snake[0].y); 
-            } else if ( direction === 1 ){
-                newHead.x =Number(snake[0].x);
-                newHead.y = Number(snake[0].y-1);
-            } else if ( direction === 2 ){
-                newHead.x =Number(snake[0].x+1);
-                newHead.y = Number(snake[0].y);
-            }  else {
-                newHead.x =Number(snake[0].x);
-                newHead.y = Number(snake[0].y+1);
-            }
-        newSnake.unshift(newHead);
-    
-       if (newHead.x<1 || newHead.x>23 || newHead.y<1 || newHead.y>23 ){
-            setGamerun(false);
-            dispatch(showFinalModalVisibleSnakeGame());
-       } else if (newHead.x === food.x & newHead.y === food.y){
-            setScore(score + 1);
-            newFood();          
-       } else {
-         removeSteps(newSnake.pop());
-         drawFood(); 
-         for (var i=1; i<newSnake.length; i++){
-             if (newSnake[i].x===newHead.x & newSnake[i].y===newHead.y){
-                dispatch(showFinalModalVisibleSnakeGame());
-                setGamerun(false);
-             }
-         };
-       }
-        setSnake(newSnake);
-        drawSnake(); 
-    };
-
-    function clearIntervals(){
-        intervals.forEach(() => clearInterval(intervals.shift()));
+      }
+    } else {
+      Alert.alert("problem with this game Snake not draw");
     }
+  }
 
-    function newFood() {
-        var x = 0;
-        var y = 0;
-        do{
-            x = Math.floor(Math.random() * 22)+1;
-            y = Math.floor(Math.random() * 22)+1;
-        } while (foodInSnake(x, y));      
-        setFood({x:x, y:y});
+  function drawFood() {
+    const ctx = ref.current.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.arc(
+        brick * food.x + brick / 2,
+        brick * food.y + brick / 2,
+        brick / 2.1,
+        0,
+        2 * Math.PI
+      );
+      ctx.fill();
+    } else {
+      Alert.alert("problem with this game Food not draw");
     }
+  }
 
-    function drawSnake() {
-        var lastBrick = snake.length-1;
-        const ctx = ref.current.getContext('2d');
-        if (ctx) {
-            ctx.fillStyle = 'black';
-            ctx.beginPath();
-            ctx.arc((brick*snake[0].x+brick/2), brick*snake[0].y+brick/2, brick/2.1, 0, 2 * Math.PI);
-            ctx.fill();
-
-            switch(direction){
-                case 0:
-                    ctx.fillRect(brick*snake[0].x +brick/2, brick*snake[0].y, brick/2, brick);
-                    ctx.fillStyle = 'grey';
-                    ctx.beginPath();
-                    ctx.arc((brick*snake[0].x+brick/3), brick*snake[0].y+brick/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    ctx.arc((brick*snake[0].x+brick/3), brick*snake[0].y+brick*2/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    break;
-                case 1:
-                    ctx.fillRect(brick*snake[0].x, brick*snake[0].y+brick/2, brick, brick/2);
-                    ctx.fillStyle = 'grey';
-                    ctx.beginPath();
-                    ctx.arc((brick*snake[0].x+brick/3), brick*snake[0].y+brick/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    ctx.arc((brick*snake[0].x+brick*2/3), brick*snake[0].y+brick/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    break;
-                case 2:
-                    ctx.fillRect(brick*snake[0].x, brick*snake[0].y, brick/2, brick);
-                    ctx.fillStyle = 'grey';
-                    ctx.beginPath();
-                    ctx.arc((brick*snake[0].x+brick*2/3), brick*snake[0].y+brick/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    ctx.arc((brick*snake[0].x+brick*2/3), brick*snake[0].y+brick*2/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    break;
-                case 3:
-                    ctx.fillRect(brick*snake[0].x, brick*snake[0].y, brick, brick/2);
-                    ctx.fillStyle = 'grey';
-                    ctx.beginPath();
-                    ctx.arc((brick*snake[0].x+brick/3), brick*snake[0].y+brick*2/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    ctx.arc((brick*snake[0].x+brick*2/3), brick*snake[0].y+brick*2/3, 1, 0, 2 * Math.PI);
-                    ctx.fill();
-                    break;
-            }
-            ctx.fillStyle = 'black';
-            for(let i=1; i<lastBrick; i++){
-                ctx.fillRect(brick*snake[i].x , brick*snake[i].y, brick, brick);
-            }
-            ctx.fillStyle = 'green';
-            ctx.fillRect(brick*snake[lastBrick].x , brick*snake[lastBrick].y, brick, brick);
-            if (snake[lastBrick].x === snake[lastBrick-1].x){
-                if(snake[lastBrick].y - snake[lastBrick-1].y > 0){
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.moveTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y);
-                    ctx.lineTo(brick*snake[lastBrick].x+brick/2, brick*snake[lastBrick].y+brick);
-                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y);
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.moveTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y+brick);
-                    ctx.lineTo(brick*snake[lastBrick].x+brick/2, brick*snake[lastBrick].y);
-                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y+brick);
-                    ctx.fill();
-                }
-            } else if (snake[lastBrick].y === snake[lastBrick-1].y){
-                if(snake[lastBrick].x - snake[lastBrick-1].x > 0){
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.moveTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y);
-                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y+brick/2);
-                    ctx.lineTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y+brick);
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.moveTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y);
-                    ctx.lineTo(brick*snake[lastBrick].x, brick*snake[lastBrick].y+brick/2);
-                    ctx.lineTo(brick*snake[lastBrick].x+brick, brick*snake[lastBrick].y+brick);
-                    ctx.fill();
-                }
-            }
-        } else {
-            Alert.alert('problem with this game Snake not draw');
-        }
-    };
-
-    function drawFood(){
-       const ctx = ref.current.getContext('2d');
-        if (ctx) {
-            ctx.fillStyle = 'red';
-            ctx.beginPath();
-            ctx.arc(brick*food.x+brick/2 , brick*food.y+brick/2, brick/2.1, 0, 2 * Math.PI);
-            ctx.fill();
-        } else {
-            Alert.alert('problem with this game Food not draw');
-        }
+  function removeSteps(step) {
+    const ctx = ref.current.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "green";
+      ctx.fillRect(brick * step.x, brick * step.y, brick, brick);
     }
+  }
 
-    function removeSteps(step){
-        const ctx = ref.current.getContext('2d');
-        if (ctx) {
-            ctx.fillStyle = 'green';
-            ctx.fillRect(brick*step.x , brick*step.y, brick, brick);
-        }
-    }
-  
-    function restartGame() {
-        setGamerun(!gamerun);
-    }
+  function restartGame() {
+    setGamerun(!gamerun);
+  }
 
-    function foodInSnake(x, y){
-        var match = false;
-        for (var i=0; i<snake.length; i++){
-            if (snake[i].x===x & snake[i].y===y){
-                match = true;
-            }
-        };
-        return match
+  function foodInSnake(x, y) {
+    var match = false;
+    for (var i = 0; i < snake.length; i++) {
+      if ((snake[i].x === x) & (snake[i].y === y)) {
+        match = true;
+      }
     }
+    return match;
+  }
 
-    function touchDesk (evt) {
-        if (gamerun) {
-            if(evt.nativeEvent.locationY < windowWidth/2  & (direction===0 || direction===2)){
-                setDirection(1);
-            } else if (evt.nativeEvent.locationY >= windowWidth/2  & (direction===0 || direction===2)){
-                setDirection(3);
-            } else if (evt.nativeEvent.locationX >= windowWidth/2  & (direction===1 || direction===3)){
-                setDirection(2);
-            } else if (evt.nativeEvent.locationX < windowWidth/2  & (direction===1 || direction===3)){
-                setDirection(0);
-            }
-        }
+  function touchDesk(evt) {
+    if (gamerun) {
+      if (
+        (evt.nativeEvent.locationY < windowWidth / 2) &
+        (direction === 0 || direction === 2)
+      ) {
+        setDirection(1);
+      } else if (
+        (evt.nativeEvent.locationY >= windowWidth / 2) &
+        (direction === 0 || direction === 2)
+      ) {
+        setDirection(3);
+      } else if (
+        (evt.nativeEvent.locationX >= windowWidth / 2) &
+        (direction === 1 || direction === 3)
+      ) {
+        setDirection(2);
+      } else if (
+        (evt.nativeEvent.locationX < windowWidth / 2) &
+        (direction === 1 || direction === 3)
+      ) {
+        setDirection(0);
+      }
     }
+  }
 
-    //Formated time value
+  //Formated time value
   function msToTime(duration) {
     let s = parseInt((duration / 1000) % 60);
     let m = parseInt((duration / (1000 * 60)) % 60);
@@ -314,20 +449,26 @@ function Snake({ navigation }) {
     return m + ":" + s;
   }
 
- /////**************************************/////
+  /////**************************************/////
 
   return (
     <SafeAreaView style={style.container}>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={finalModalVisible}
-            onRequestClose={() => {
-            dispatch(hideFinalModalVisibleSnakeGame());
-            }}
-        >
-            <FinalModal game={'snake'} />
-        </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={finalModalVisible}
+        onRequestClose={() => {
+          dispatch(hideFinalModalVisibleSnakeGame());
+        }}
+      >
+        <FinalModal
+          game={'snake'}
+          result1name={"Score"}
+          result1={score}
+          result2name={"Time"}
+          result2={msToTime(time)}
+        />
+      </Modal>
       <View style={style.header}>
         <Button
           title="Back"
@@ -349,10 +490,15 @@ function Snake({ navigation }) {
         <Text style={style.infoText}>Speed: {speed} </Text>
       </View>
       <TouchableWithoutFeedback onPress={(evt) => touchDesk(evt)}>
-      <View  style={style.desk}>    
-        <Canvas ref={ref} width={windowWidth}  height={windowWidth} style={style.playDesk}  />
+        <View style={style.desk}>
+          <Canvas
+            ref={ref}
+            width={windowWidth}
+            height={windowWidth}
+            style={style.playDesk}
+          />
         </View>
-      </TouchableWithoutFeedback> 
+      </TouchableWithoutFeedback>
       <View style={style.footer}>
         <MarqueeText
           style={style.footerText}
@@ -362,7 +508,9 @@ function Snake({ navigation }) {
           delay={4000}
           consecutive={true}
         >
-          Control the snake using the arrow keys on the keyboard or touches on the touchscreen. The goal is to eat as many apples as possible. Avoid obstacles and the snake's own tail.
+          Control the snake using the arrow keys on the keyboard or touches on
+          the touchscreen. The goal is to eat as many apples as possible. Avoid
+          obstacles and the snake's own tail.
         </MarqueeText>
       </View>
     </SafeAreaView>
@@ -420,7 +568,7 @@ const style = StyleSheet.create({
     flex: 1,
   },
   footerText: {
-   color: "grey",
+    color: "grey",
   },
   desk: {
     width: "100%",
@@ -430,12 +578,10 @@ const style = StyleSheet.create({
     flexGrow: "1",
   },
   playDesk: {
-    backgroundColor: 'black',
+    backgroundColor: "black",
     width: windowWidth,
     height: windowWidth,
-
-  }
- 
+  },
 });
 
 export default Snake;
