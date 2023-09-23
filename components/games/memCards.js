@@ -321,7 +321,13 @@ function MemCards({ navigation }) {
           dispatch(hideFinalModalVisibleMemoryGame());
         }}
       >
-       <FinalModal game={'memory'} />
+       <FinalModal 
+        game={'memory'} 
+        result1name={'Steps'} 
+        result1={steps}
+        result2name={'Time'} 
+        result2={msToTime(time)}
+       />
       </Modal>
 
       <View style={style.header}>
@@ -346,7 +352,6 @@ function MemCards({ navigation }) {
       <View style={style.info}>
         <Text style={style.infoText}>Time: {msToTime(time)}</Text>
         <Text style={style.infoText}>Steps: {steps}</Text>
-        <Text style={style.infoText}>Score:  </Text>
       </View>
       <LinearGradient
         colors={["#4c669f", "#3b5998", "#192f6a"]}
