@@ -1,12 +1,9 @@
-import { View, Button, Text, } from "react-native";
+import { View, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchShopListItems } from "./../reducers/shoppingList";
+import { fetchShopListItems, loadShopListcategories } from "./../reducers/shoppingList";
 
 import ShopListActive from "./shopListActive";
-
-
-
 
 function ShopList({}) {
   const dispatch = useDispatch();
@@ -18,12 +15,28 @@ function ShopList({}) {
     dispatch(fetchShopListItems());
   }, []);
 
-  if(list.length>0){
-    shopList = (< ShopListActive list={list} />)
+  useEffect(() => {
+    var cats = [];
+    console.log(list);
+    if (list.length > 0) {
+      list.forEach((element) => {
+        if (!cats.includes(element.category_name)) {
+          cats.push(element.category_name);
+        }
+      });
+    };
+    console.log(cats);
+    dispatch(loadShopListcategories(cats));
+  }, [list.length]);
+
+  if (list.length > 0) {
+    shopList = <ShopListActive list={list} />;
   } else {
-    shopList = (<View>
-    <Text>empty</Text>
-  </View>)
+    shopList = (
+      <View>
+        <Text>empty</Text>
+      </View>
+    );
   }
 
   return (

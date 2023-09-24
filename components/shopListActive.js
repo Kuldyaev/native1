@@ -1,5 +1,5 @@
 import { View,  Text, } from "react-native";
-import {  useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 
 
@@ -7,7 +7,7 @@ import {  useDispatch } from "react-redux";
 
 function ShopListActive({list}) {
   const dispatch = useDispatch();
-
+  const categories = useSelector((state) => state.shopList.categories);
   
 
   return (
@@ -16,6 +16,7 @@ function ShopListActive({list}) {
       <Text>Active</Text>
 
       <Text>{list.length}</Text>
+      <Text>{categories[0]}</Text>
        
     </View>
   );

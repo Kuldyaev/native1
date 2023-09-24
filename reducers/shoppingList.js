@@ -32,7 +32,8 @@ export const fetchShopListItems = createAsyncThunk(
 
 
 const initialState = {
-    allItems: []
+    allItems: [],
+    categories: []
 };
 
 const shopListReducer = createSlice({
@@ -41,6 +42,9 @@ const shopListReducer = createSlice({
   reducers: {
     reciveShopListFromAPI: (state) => {
       state.allItems = [...state.allItems ,"x"];
+    },
+    loadShopListcategories: (state, action) => {
+        state.categories = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -53,7 +57,7 @@ const shopListReducer = createSlice({
 
 });
 // Action creators are generated for each case reducer function
-export const { reciveShopListFromAPI } = shopListReducer.actions;
+export const { reciveShopListFromAPI, loadShopListcategories } = shopListReducer.actions;
 
 
 export default shopListReducer.reducer;
