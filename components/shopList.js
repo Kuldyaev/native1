@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchShopListItems, loadShopListcategories } from "./../reducers/shoppingList";
 
-import ShopListActive from "./shopListActive";
+import ShopListActive from "./shopList/shopListActive";
 
 function ShopList({}) {
   const dispatch = useDispatch();
