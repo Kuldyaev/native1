@@ -1,15 +1,68 @@
-import { View, Text, FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+  Switch,
+} from "react-native";
+import { useState } from "react";
 
-function ShopListCategory({ category }) {
+const windowWidth = Dimensions.get("window").width;
+
+function ShopListCategory({ category, list }) {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+  const activeList = list.filter(
+    (el) => (el.category_name === category) & el.is_active
+  );
+
+  const isShowing = activeList.length>0 ?{display: 'flex' } :{display: 'none'};
   
-
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+  true;
+  return (
+    <View style={[style.container, isShowing ]}>
+      <View style={style.containerTop}>
         <Text>{category}</Text>
-        
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
       </View>
-    )
+      <View style={ isEnabled ?{display: "flex"} :{display: "none"}}>
+        <FlatList
+          data={activeList}
+          renderItem={({ item }) => <Text>{item.name}</Text>}
+        />
+      </View>
+    </View>
+  );
 }
 
+const style = StyleSheet.create({
+  container: {
+    backgroundColor: "silver",
+    width: windowWidth,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  containerTop: {
+    backgroundColor: "grey",
+    width: windowWidth,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 25,
+    paddingRight: 25,
+  },
+});
 export default ShopListCategory;
