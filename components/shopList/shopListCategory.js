@@ -26,9 +26,9 @@ function ShopListCategory({ category, list }) {
       <View style={style.containerTop}>
         <Text>{category}</Text>
         <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
+          trackColor={{ false: "#767577", true: "silver" }}
+          thumbColor={isEnabled ? "#111111" : "#ffffff"}
+          ios_backgroundColor="#f4f3f4"
           onValueChange={toggleSwitch}
           value={isEnabled}
         />
@@ -51,6 +51,7 @@ const style = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 1,
   },
   containerTop: {
     backgroundColor: "grey",
