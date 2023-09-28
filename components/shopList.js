@@ -5,6 +5,7 @@ import {
   Dimensions,
   Pressable,
   Image,
+  SafeAreaView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -64,29 +65,30 @@ function ShopList({}) {
   }
 
   return (
-    <View style={style.container}>
+    <SafeAreaView style={style.container}>
       <View style={[style.container, style.containerTop]}>
         <Text> </Text>
         <Text>TOP</Text>
-        <Pressable
-          style={style.pressable}
-          onPress={changeMainSwitch}
-        >
+        <Pressable style={style.pressable} onPress={changeMainSwitch}>
           <Image
             source={require("../assets/galka.png")}
-            style={{ width: 18, height: 18, transform: allListsShowed ?'rotate(180deg)' :'rotate(0deg)'}}
+            style={{
+              width: 12,
+              height: 12,
+              transform: allListsShowed ? "rotate(180deg)" : "rotate(0deg)",
+            }}
           />
         </Pressable>
       </View>
       {shopList}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const style = StyleSheet.create({
   container: {
     width: windowWidth,
-    display: "flex",
+    //  display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
@@ -96,19 +98,21 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingLeft: "10%",
-    paddingRight: "10%",
+    paddingRight: "7%",
     paddingBottom: 2,
     paddingTop: 2,
   },
   pressable: {
-    width: 22,
-    height: 22,
+    width: 30,
+    height: 30,
+    borderRadius: "50%",
     borderColor: "grey",
     borderStyle: "solid",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    paddingLeft: 1,
-    paddingTop: 1,
-  }
+  },
 });
 
 export default ShopList;
