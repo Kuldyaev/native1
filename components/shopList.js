@@ -11,11 +11,8 @@ import { useEffect } from "react";
 import {
   fetchShopListItems,
   loadShopListcategories,
-
 } from "./../reducers/shoppingList";
-import {
-  switchShopingListAllCategoruesShowed
-} from "./../reducers/status";
+import { switchShopingListAllCategoruesShowed } from "./../reducers/status";
 
 import ShopListActive from "./shopList/shopListActive";
 
@@ -25,7 +22,9 @@ function ShopList({}) {
   const dispatch = useDispatch();
 
   const list = useSelector((state) => state.shopList.allItems);
-  const allListsShowed = useSelector((state) => state.status.shopingListAllCategoruesShowed);
+  const allListsShowed = useSelector(
+    (state) => state.status.shopingListAllCategoruesShowed
+  );
   let shopList;
 
   useEffect(() => {
@@ -44,12 +43,18 @@ function ShopList({}) {
     dispatch(loadShopListcategories(cats));
   }, [list.length]);
 
- const xxxxx = () => {
-  dispatch(switchShopingListAllCategoruesShowed());
- }
+  const changeMainSwitch = () => {
+    dispatch(switchShopingListAllCategoruesShowed());
+  };
 
   if (list.length > 0) {
-    shopList = <ShopListActive list={list} style={style.container} mainSwitch={allListsShowed} />;
+    shopList = (
+      <ShopListActive
+        list={list}
+        style={style.container}
+        mainSwitch={allListsShowed}
+      />
+    );
   } else {
     shopList = (
       <View>
@@ -61,15 +66,15 @@ function ShopList({}) {
   return (
     <View style={style.container}>
       <View style={[style.container, style.containerTop]}>
-        <Text>{ allListsShowed ?'yes' :'no'}</Text>
+        <Text> </Text>
         <Text>TOP</Text>
-        <Pressable 
-        style={{ width: 22, height: 22 , borderColor: "grey", borderStyle: "solid", borderWidth: 1}}
-        onPress={xxxxx}
+        <Pressable
+          style={style.pressable}
+          onPress={changeMainSwitch}
         >
           <Image
-            source={require("../assets/galka.svg")}
-            style={{ width: 20, height: 20 , }}
+            source={require("../assets/galka.png")}
+            style={{ width: 18, height: 18, transform: allListsShowed ?'rotate(180deg)' :'rotate(0deg)'}}
           />
         </Pressable>
       </View>
@@ -94,6 +99,15 @@ const style = StyleSheet.create({
     paddingRight: "10%",
     paddingBottom: 2,
     paddingTop: 2,
+  },
+  pressable: {
+    width: 22,
+    height: 22,
+    borderColor: "grey",
+    borderStyle: "solid",
+    borderWidth: 1,
+    paddingLeft: 1,
+    paddingTop: 1,
   }
 });
 

@@ -4,7 +4,7 @@ import ShopListCategory from "./shopListCategory";
 
 const windowWidth = Dimensions.get("window").width;
 
-function ShopListActive({ list }) {
+function ShopListActive({ list, mainSwitch }) {
   const categories = useSelector((state) => state.shopList.categories);
 
   if (categories.length > 0) {
@@ -12,7 +12,7 @@ function ShopListActive({ list }) {
       <View style={style.container}>
         <FlatList
           data={categories}
-          renderItem={({ item }) => <ShopListCategory category={item} list={list} />}
+          renderItem={({ item }) => <ShopListCategory category={item} list={list} mainSwitch={mainSwitch} />}
         />
       </View>
     );

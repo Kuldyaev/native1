@@ -6,24 +6,28 @@ import {
   Dimensions,
   Switch,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const windowWidth = Dimensions.get("window").width;
 
-function ShopListCategory({ category, list }) {
+function ShopListCategory({ category, list, mainSwitch }) {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const activeList = list.filter(
     (el) => (el.category_name === category) & el.is_active
   );
+  const isShowing =
+    activeList.length > 0 ? { display: "flex" } : { display: "none" };
 
-  const isShowing = activeList.length>0 ?{display: 'flex' } :{display: 'none'};
-  
-  true;
+  useEffect(() => {
+    setIsEnabled(mainSwitch);
+  }, [mainSwitch]);
+
   return (
-    <View style={[style.container, isShowing ]}>
+    <View style={[style.container, isShowing]}>
       <View style={style.containerTop}>
+        <Text> </Text>
         <Text>{category}</Text>
         <Switch
           trackColor={{ false: "#767577", true: "silver" }}
@@ -33,7 +37,7 @@ function ShopListCategory({ category, list }) {
           value={isEnabled}
         />
       </View>
-      <View style={ isEnabled ?{display: "flex"} :{display: "none"}}>
+      <View style={isEnabled ? { display: "flex" } : { display: "none" }}>
         <FlatList
           data={activeList}
           renderItem={({ item }) => <Text>{item.name}</Text>}
