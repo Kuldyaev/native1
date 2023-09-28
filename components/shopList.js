@@ -11,7 +11,11 @@ import { useEffect } from "react";
 import {
   fetchShopListItems,
   loadShopListcategories,
+
 } from "./../reducers/shoppingList";
+import {
+  switchShopingListAllCategoruesShowed
+} from "./../reducers/status";
 
 import ShopListActive from "./shopList/shopListActive";
 
@@ -21,6 +25,7 @@ function ShopList({}) {
   const dispatch = useDispatch();
 
   const list = useSelector((state) => state.shopList.allItems);
+  const allListsShowed = useSelector((state) => state.status.shopingListAllCategoruesShowed);
   let shopList;
 
   useEffect(() => {
@@ -39,8 +44,12 @@ function ShopList({}) {
     dispatch(loadShopListcategories(cats));
   }, [list.length]);
 
+ const xxxxx = () => {
+  dispatch(switchShopingListAllCategoruesShowed());
+ }
+
   if (list.length > 0) {
-    shopList = <ShopListActive list={list} style={style.container} />;
+    shopList = <ShopListActive list={list} style={style.container} mainSwitch={allListsShowed} />;
   } else {
     shopList = (
       <View>
@@ -52,8 +61,12 @@ function ShopList({}) {
   return (
     <View style={style.container}>
       <View style={[style.container, style.containerTop]}>
+        <Text>{ allListsShowed ?'yes' :'no'}</Text>
         <Text>TOP</Text>
-        <Pressable style={{ width: 22, height: 22 , borderColor: "grey", borderStyle: "solid", borderWidth: 1}}>
+        <Pressable 
+        style={{ width: 22, height: 22 , borderColor: "grey", borderStyle: "solid", borderWidth: 1}}
+        onPress={xxxxx}
+        >
           <Image
             source={require("../assets/galka.svg")}
             style={{ width: 20, height: 20 , }}
@@ -75,7 +88,12 @@ const style = StyleSheet.create({
   },
   containerTop: {
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: "10%",
+    paddingRight: "10%",
+    paddingBottom: 2,
+    paddingTop: 2,
   }
 });
 

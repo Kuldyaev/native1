@@ -5,6 +5,7 @@ export const statusReducer = createSlice({
   initialState: {
     finalModalVisibleMemoryGame: false,
     finalModalVisibleSnakeGame: false,
+    shopingListAllCategoruesShowed: false,
   },
   reducers: {
     hideFinalModalVisibleMemoryGame: (state) => {
@@ -19,6 +20,9 @@ export const statusReducer = createSlice({
     showFinalModalVisibleSnakeGame: (state) => {
       state.finalModalVisibleSnakeGame = true;
     },
+    switchShopingListAllCategoruesShowed: (state) => {
+      state.shopingListAllCategoruesShowed = !state.shopingListAllCategoruesShowed;
+    },
   },
 });
 
@@ -28,6 +32,7 @@ export const {
   showFinalModalVisibleMemoryGame,
   hideFinalModalVisibleSnakeGame,
   showFinalModalVisibleSnakeGame,
+  switchShopingListAllCategoruesShowed
 } = statusReducer.actions;
 
 export default statusReducer.reducer;
